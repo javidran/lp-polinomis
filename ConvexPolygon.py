@@ -6,8 +6,7 @@ class ConvexPolygon:
     points = None
 
     def __init__(self, points):
-        self.points = list(dict.fromkeys(points)) #Con comprobar si es convexo deberia evitar hacer esto
-        self.convex_hull()
+        self.points = self.convex_hull( list(dict.fromkeys(points)) )
 
     def check_is_inside(self, point):
         pass
@@ -28,7 +27,7 @@ class ConvexPolygon:
         sum = 0
         for dist in self.distance_list():
             sum += dist
-        return sum
+        return sum  
 
     def is_regular(self):
         dist_list = self.distance_list()
@@ -36,16 +35,31 @@ class ConvexPolygon:
         for dist in dist_list:
             if dist != dist_list[0]: return False
         return True
+    
+    def get_bounding_box(self):
+        xmin = self.points[0][0]
+        ymin = self.points[0][1]
+        xmax = self.points[0][0]
+        ymax = self.points[0][1]
+
+        for point in self.points:
+            if point[0] < xmin: xmin = point[0]
+            if point[0] > xmax: xmax = point[0]
+            if point[1] < ymin: ymin = point[1]
+            if point[1] > ymax: ymax = point[1]
+            
+        return [(xmin, ymin), (xmax, ymax)]
 
     def draw_polygon(self):
-        image = ImagePath.Path(self.points).getbbox()   
-        size = list(map(int, map(math.ceil, image[2:]))) 
+        img_resolution = []
+        bounding_box = self.get_bounding_box()
+        img_resolution.append(bounding_box[1][0] - bounding_box[0][0])
+        img_resolution.append(bounding_box[1][1] - bounding_box[0][1])
 
-        im = Image.new("RGB", size, "white")
-
-        img1 = ImageDraw.Draw(im)
-        img1.polygon(self.points, fill ="#ffff33", outline="blue")
-        im.save("nameImage.png")
+        img = Image.new("RGB", img_resolution, "white")
+        imgDraw = ImageDraw.Draw(img)
+        imgDraw.polygon(self.points, fill ="#ffff33", outline="blue")
+        img.save("nameImage.png")
 
     def print_point_list(self):
         print(self.points)
@@ -78,10 +92,10 @@ class ConvexPolygon:
         elif value > 0: return 1 # Clockwise
         else: return 2 # Counterclockwise
 
-    def compare(self, point1, point2):
-        o = self.orientation(self.points[0], point1, point2)
+    def compare(self, point0, point1, point2):
+        o = self.orientation(point0, point1, point2)
         if o == 0:
-            if self.calc_distance(self.points[0], point2) >= self.calc_distance(self.points[0], point1): 
+            if self.calc_distance(point0, point2) >= self.calc_distance(point0, point1): 
                 return -1
             else: 
                 return 1
@@ -90,48 +104,47 @@ class ConvexPolygon:
         else: 
             return 1
 
-    def convex_hull(self):
+    def convex_hull(self, points):
         # Find the bottom-most point
-        ymin = self.points[0][1]
+        ymin = points[0][1]
         min = 0
-        for i, point in enumerate(self.points):
+        for i, point in enumerate(points):
             y = point[1]
-            if y < ymin or (y == ymin and point[0] < self.points[min][0]):
+            if y < ymin or (y == ymin and point[0] < points[min][0]):
                 ymin = y
                 min = i
 
         # Place the bottom-most point at first position
-        tmp = self.points[0]
-        self.points[0] = self.points[min]
-        self.points[min] = tmp
+        tmp = points[0]
+        points[0] = points[min]
+        points[min] = tmp
 
         #Order points in counterclockwise
-        self.points = [self.points[0]] + sorted(self.points[1:], key=cmp_to_key(self.compare))
+        points = [points[0]] + sorted(points[1:], key=cmp_to_key(self.compare(points[0])))
 
         # If two or more points are colinear, we will remove all the points in the middle
         # The compare function puts the farthest point at the end
         points_without_colinear = []
 
-        for i in range(self.number_of_vertices()):
-            if i > 0 and i < len(self.points)-1 and self.orientation(self.points[0], self.points[i], self.points[i+1]) == 0:
+        for i in range(len(points)):
+            if i > 0 and i < len(points)-1 and self.orientation(points[0], points[i], points[i+1]) == 0:
                 continue
-            points_without_colinear.append(self.points[i])
+            points_without_colinear.append(points[i])
 
-        self.points = points_without_colinear
+        points = points_without_colinear
 
         # If we have less than 3 vertices, we don't need to do more calculus.
-        if self.number_of_vertices() < 3: return
+        if len(points) < 3: return
 
         # Create an empty stack with the 3 first points
         stack  = []
-        for p in self.points[:3]:
+        for p in points[:3]:
             stack.append(p)
 
         # Iterate every vertex to check if it can form part of the convex hull.
-        for i in range(3, self.number_of_vertices()):
-            while self.orientation(stack[len(stack)-2], stack[len(stack)-1], self.points[i]) != 2:
+        for i in range(3, len(points)):
+            while self.orientation(stack[len(stack)-2], stack[len(stack)-1], points[i]) != 2:
                 stack.pop()
-            stack.append(self.points[i])
+            stack.append(points[i])
 
-        self.points = stack
-        self.points.reverse()
+        return stack.reverse()
