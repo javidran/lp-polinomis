@@ -14,4 +14,8 @@ pointlist = [(50, 100), (200, 0), (0, 0), (200, 0), (130, 200), (160, 150), (100
 cp = ConvexPolygon(pointlist)
 print("Third area: " + str(cp.get_area()))
 
+pointlist = [(0, 0), (0, 1), (1, 1), (0.2, 0.8)]
+cp = ConvexPolygon(pointlist)
+print("Fourth area: " + str(cp.get_area()))
+
 

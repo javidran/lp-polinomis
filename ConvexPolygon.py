@@ -27,11 +27,11 @@ class ConvexPolygon:
         else:
             return vertices
 
-    def perimeter(self):
+    def get_perimeter(self):
         perimeter_sum = 0
         for dist in self.__distance_list():
             perimeter_sum += dist
-        return perimeter_sum
+        return round(perimeter_sum, 3)
 
     def is_regular(self):
         dist_list = self.__distance_list()
@@ -50,6 +50,40 @@ class ConvexPolygon:
         unified_points = self.get_vertices() + convex_polygon.get_vertices()
         union = ConvexPolygon(unified_points)
         return union.get_vertices() == self.get_vertices()
+
+    def intersect(self, convex_polygon):
+        def inside(p):
+            return (cp2[0] - cp1[0]) * (p[1] - cp1[1]) > (cp2[1] - cp1[1]) * (p[0] - cp1[0])
+
+        def computeIntersection():
+            dc = [cp1[0] - cp2[0], cp1[1] - cp2[1]]
+            dp = [s[0] - e[0], s[1] - e[1]]
+            n1 = cp1[0] * cp2[1] - cp1[1] * cp2[0]
+            n2 = s[0] * e[1] - s[1] * e[0]
+            n3 = 1.0 / (dc[0] * dp[1] - dc[1] * dp[0])
+            return [(n1 * dp[0] - n2 * dc[0]) * n3, (n1 * dp[1] - n2 * dc[1]) * n3]
+
+        outputList = self.get_vertices()
+        cp1 = convex_polygon.get_vertices()[0]
+
+        for clipVertex in convex_polygon.get_vertices():
+            cp2 = clipVertex
+            inputList = outputList
+            outputList = []
+            s = inputList[0]
+
+            for subjectVertex in inputList:
+                e = subjectVertex
+                if inside(e):
+                    if not inside(s):
+                        outputList.append(computeIntersection())
+                    outputList.append(e)
+                elif inside(s):
+                    outputList.append(computeIntersection())
+                s = e
+            cp1 = cp2
+        return (outputList)
+
 
     def contains_point(self, point):
         for i in range(self.number_of_vertices()):
@@ -77,7 +111,7 @@ class ConvexPolygon:
         centroid_x /= 3*det
         centroid_y /= 3*det
 
-        return round(centroid_x, 2), round(centroid_y, 2)
+        return round(centroid_x, 3), round(centroid_y, 3)
 
     def get_area(self):
         area = 0
@@ -87,7 +121,7 @@ class ConvexPolygon:
             area += (self.points[j][0] + self.points[i][0]) * (self.points[j][1] - self.points[i][1])
             j = i
 
-        return round(abs(area / 2.0), 2)
+        return round(abs(area / 2.0), 3)
 
     def get_bounding_box(self):
         xmin = self.points[0][0]
