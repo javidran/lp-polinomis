@@ -8,6 +8,9 @@ class ConvexPolygon:
     def __init__(self, points):
         self.points = self.convex_hull( list(dict.fromkeys(points)) )
 
+    def __str__(self):
+        return str(self.points)
+
     def check_is_inside(self, point):
         pass
 
@@ -60,9 +63,6 @@ class ConvexPolygon:
         imgDraw = ImageDraw.Draw(img)
         imgDraw.polygon(self.points, fill ="#ffff33", outline="blue")
         img.save("nameImage.png")
-
-    def print_point_list(self):
-        print(self.points)
 
     def calc_distance(self, point_a, point_b):
         return math.sqrt( ((point_a[0]-point_b[0])**2)+((point_a[1]-point_b[1])**2) )
@@ -120,12 +120,11 @@ class ConvexPolygon:
         points[min] = tmp
 
         #Order points in counterclockwise
-        points = [points[0]] + sorted(points[1:], key=cmp_to_key(self.compare(points[0])))
+        points = [points[0]] + sorted(points[1:], key=cmp_to_key(lambda x,y:self.compare(points[0], x, y)))
 
         # If two or more points are colinear, we will remove all the points in the middle
         # The compare function puts the farthest point at the end
         points_without_colinear = []
-
         for i in range(len(points)):
             if i > 0 and i < len(points)-1 and self.orientation(points[0], points[i], points[i+1]) == 0:
                 continue
@@ -134,7 +133,7 @@ class ConvexPolygon:
         points = points_without_colinear
 
         # If we have less than 3 vertices, we don't need to do more calculus.
-        if len(points) < 3: return
+        if len(points) < 3: return points
 
         # Create an empty stack with the 3 first points
         stack  = []
@@ -146,5 +145,5 @@ class ConvexPolygon:
             while self.orientation(stack[len(stack)-2], stack[len(stack)-1], points[i]) != 2:
                 stack.pop()
             stack.append(points[i])
-
-        return stack.reverse()
+        
+        return stack
