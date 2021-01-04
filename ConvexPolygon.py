@@ -15,9 +15,6 @@ class ConvexPolygon:
     def get_vertices(self):
         return self.points.copy()
 
-    def check_is_inside(self, point):
-        pass
-
     def number_of_vertices(self):
         return len(self.points)
 
@@ -47,10 +44,13 @@ class ConvexPolygon:
         unified_points = self.get_vertices() + convex_polygon.get_vertices()
         return ConvexPolygon(unified_points)
 
-    def includes_convex_polygon(self, convex_polygon):
+    def contains_convex_polygon(self, convex_polygon):
         unified_points = self.get_vertices() + convex_polygon.get_vertices()
         union = ConvexPolygon(unified_points)
         return union.get_vertices() == self.get_vertices()
+
+    def contains_point(self, point):
+        pass
 
     def get_bounding_box(self):
         xmin = self.points[0][0]
