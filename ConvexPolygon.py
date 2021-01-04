@@ -1,5 +1,5 @@
 import math
-from PIL import Image, ImageDraw, ImagePath
+from PIL import Image, ImageDraw
 from functools import cmp_to_key
 
 
@@ -35,9 +35,11 @@ class ConvexPolygon:
 
     def is_regular(self):
         dist_list = self.__distance_list()
-        if self.number_of_edges() < 3: return False
+        if self.number_of_edges() < 3:
+            return False
         for dist in dist_list:
-            if dist != dist_list[0]: return False
+            if dist != dist_list[0]:
+                return False
         return True
 
     def union(self, convex_polygon):
@@ -140,20 +142,21 @@ class ConvexPolygon:
         points[min_i] = tmp
 
         # Order points in counterclockwise
-        points = [points[0]] + sorted(points[1:], key=cmp_to_key(lambda x, y: self.__compare(points[0], x, y)))
+        points = [points[0]] + sorted(points[1:], key=cmp_to_key(lambda p1, p2: self.__compare(points[0], p1, p2)))
 
-        # If two or more points are colinear, we will remove all the points in the middle
+        # If two or more points are collinear, we will remove all the points in the middle
         # The compare function puts the farthest point at the end
-        points_without_colinear = []
+        points_without_collinear = []
         for i in range(len(points)):
             if 0 < i < len(points) - 1 and self.__orientation(points[0], points[i], points[i + 1]) == 0:
                 continue
-            points_without_colinear.append(points[i])
+            points_without_collinear.append(points[i])
 
-        points = points_without_colinear
+        points = points_without_collinear
 
         # If we have less than 3 vertices, we don't need to do more calculus.
-        if len(points) < 3: return points
+        if len(points) < 3:
+            return points
 
         # Create an empty stack with the 3 first points
         stack = []
