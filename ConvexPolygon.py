@@ -100,11 +100,11 @@ class ConvexPolygon:
                     edge_list.append(self.__calc_distance(self.points[i], self.points[i + 1]))
             return edge_list
 
-    # To find orientation of ordered triplet (p, q, r). 
-    # The function returns following values 
+    # To find orientation of ordered triplet (p, q, r).
+    # The function returns following values
     # 0 --> p, q and r are collinear
-    # 1 --> Clockwise 
-    # 2 --> Counterclockwise 
+    # 1 --> Clockwise
+    # 2 --> Counterclockwise
     def __orientation(self, pa, pb, pc):
         value = (pb[1] - pa[1]) * (pc[0] - pb[0]) - (pb[0] - pa[0]) * (pc[1] - pb[1])
         if value == 0:
