@@ -57,6 +57,38 @@ class ConvexPolygon:
                 return False
         return True
 
+    def get_centroid(self):
+        centroid_x = 0
+        centroid_y = 0
+        det = 0
+
+        for i in range(self.number_of_vertices()):
+            if i+1 == self.number_of_vertices():
+                j = 0
+            else:
+                j = i + 1
+
+            temp_det = self.points[i][0] * self.points[j][1] - self.points[j][0] * self.points[i][1]
+            det += temp_det
+
+            centroid_x += (self.points[i][0] + self.points[j][0])*temp_det
+            centroid_y += (self.points[i][1] + self.points[j][1])*temp_det
+
+        centroid_x /= 3*det
+        centroid_y /= 3*det
+
+        return round(centroid_x, 2), round(centroid_y, 2)
+
+    def get_area(self):
+        area = 0
+        j = self.number_of_vertices()-1
+
+        for i in range(self.number_of_vertices()):
+            area += (self.points[j][0] + self.points[i][0]) * (self.points[j][1] - self.points[i][1])
+            j = i
+
+        return round(abs(area / 2.0), 2)
+
     def get_bounding_box(self):
         xmin = self.points[0][0]
         ymin = self.points[0][1]
