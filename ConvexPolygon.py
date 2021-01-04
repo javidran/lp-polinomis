@@ -2,6 +2,7 @@ import math
 from PIL import Image, ImageDraw, ImagePath
 from functools import cmp_to_key
 
+
 class ConvexPolygon:
     points = None
 
@@ -10,6 +11,9 @@ class ConvexPolygon:
 
     def __str__(self):
         return str(self.points)
+
+    def get_vertices(self):
+        return self.points.copy()
 
     def check_is_inside(self, point):
         pass
@@ -38,6 +42,15 @@ class ConvexPolygon:
         for dist in dist_list:
             if dist != dist_list[0]: return False
         return True
+
+    def union(self, convex_polygon):
+        unified_points = self.get_vertices() + convex_polygon.get_vertices()
+        return ConvexPolygon(unified_points)
+
+    def includes_convex_polygon(self, convex_polygon):
+        unified_points = self.get_vertices() + convex_polygon.get_vertices()
+        union = ConvexPolygon(unified_points)
+        return union.get_vertices() == self.get_vertices()
     
     def get_bounding_box(self):
         xmin = self.points[0][0]
@@ -46,10 +59,14 @@ class ConvexPolygon:
         ymax = self.points[0][1]
 
         for point in self.points:
-            if point[0] < xmin: xmin = point[0]
-            if point[0] > xmax: xmax = point[0]
-            if point[1] < ymin: ymin = point[1]
-            if point[1] > ymax: ymax = point[1]
+            if point[0] < xmin: 
+                xmin = point[0]
+            if point[0] > xmax: 
+                xmax = point[0]
+            if point[1] < ymin: 
+                ymin = point[1]
+            if point[1] > ymax: 
+                ymax = point[1]
             
         return [(xmin, ymin), (xmax, ymax)]
 
