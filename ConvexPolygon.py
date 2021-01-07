@@ -3,11 +3,89 @@ from PIL import Image, ImageDraw
 from functools import cmp_to_key
 
 
+def calc_distance(point_a, point_b):
+    return math.sqrt(((point_a[0] - point_b[0]) ** 2) + ((point_a[1] - point_b[1]) ** 2))
+
+
+# To find orientation of ordered triplet (p, q, r).
+# The function returns following values depending of their relation
+# 0 --> Collinear
+# 1 --> Clockwise
+# 2 --> Counterclockwise
+def orientation(pa, pb, pc):
+    value = (pb[1] - pa[1]) * (pc[0] - pb[0]) - (pb[0] - pa[0]) * (pc[1] - pb[1])
+    if value == 0:
+        return 0  # Collinear
+    elif value > 0:
+        return 1  # Clockwise
+    else:
+        return 2  # Counterclockwise
+
+
+def convex_hull(points):
+
+    def compare(point0, point1, point2):
+        o = orientation(point0, point1, point2)
+        if o == 0:
+            if calc_distance(point0, point2) >= calc_distance(point0, point1):
+                return -1
+            else:
+                return 1
+        elif o == 2:
+            return -1
+        else:
+            return 1
+
+    # Find the bottom-most point
+    ymin = points[0][1]
+    min_i = 0
+    for i, point in enumerate(points):
+        y = point[1]
+        if y < ymin or (y == ymin and point[0] < points[min_i][0]):
+            ymin = y
+            min_i = i
+
+    # Place the bottom-most point at first position
+    tmp = points[0]
+    points[0] = points[min_i]
+    points[min_i] = tmp
+
+    # Order points in counterclockwise
+    points = [points[0]] + sorted(points[1:], key=cmp_to_key(lambda p1, p2: compare(points[0], p1, p2)))
+
+    # If two or more points are collinear, we will remove all the points in the middle
+    # The compare function puts the farthest point at the end
+    points_without_collinear = []
+    for i in range(len(points)):
+        if 0 < i < len(points) - 1 and orientation(points[0], points[i], points[i + 1]) == 0:
+            continue
+        points_without_collinear.append(points[i])
+
+    points = points_without_collinear
+
+    # If we have less than 3 vertices, we don't need to do more calculus.
+    if len(points) < 3:
+        return points
+
+    # Create an empty stack with the 3 first points
+    stack = []
+    for p in points[:3]:
+        stack.append(p)
+
+    # Iterate every vertex to check if it can form part of the convex hull.
+    for i in range(3, len(points)):
+        while orientation(stack[len(stack) - 2], stack[len(stack) - 1], points[i]) != 2:
+            stack.pop()
+        stack.append(points[i])
+
+    return stack
+
+
 class ConvexPolygon:
     points = None
 
     def __init__(self, points):
-        self.points = self.__convex_hull(list(dict.fromkeys(points)))
+        self.points = convex_hull(list(dict.fromkeys(points)))
 
     def __str__(self):
         return str(self.points)
@@ -34,11 +112,17 @@ class ConvexPolygon:
         return round(perimeter_sum, 3)
 
     def is_regular(self):
-        dist_list = self.__distance_list()
+
+        def get_angle(a, b, c):
+            ang = math.degrees(math.atan2(c[1] - b[1], c[0] - b[0]) - math.atan2(a[1] - b[1], a[0] - b[0]))
+            return ang + 360 if ang < 0 else ang
+
         if self.number_of_edges() < 3:
             return False
-        for dist in dist_list:
-            if dist != dist_list[0]:
+
+        reference_angle = get_angle(self.points[0], self.points[1], self.points[2])
+        for i in range(self.number_of_vertices()):
+            if 0 < i < self.number_of_vertices()-3 and reference_angle != get_angle(self.points[i], self.points[i+1], self.points[i+2]):
                 return False
         return True
 
@@ -84,10 +168,9 @@ class ConvexPolygon:
             cp1 = cp2
         return (outputList)
 
-
     def contains_point(self, point):
         for i in range(self.number_of_vertices()):
-            if 0 < i < self.number_of_vertices() - 1 and self.__orientation(self.points[i], self.points[i+1], point) == 1:
+            if 0 < i < self.number_of_vertices() - 1 and orientation(self.points[i], self.points[i + 1], point) == 1:
                 return False
         return True
 
@@ -152,90 +235,16 @@ class ConvexPolygon:
         img_draw.polygon(self.points, fill="#ffff33", outline="blue")
         img.save("nameImage.png")
 
-    def __calc_distance(self, point_a, point_b):
-        return math.sqrt(((point_a[0] - point_b[0]) ** 2) + ((point_a[1] - point_b[1]) ** 2))
-
     def __distance_list(self):
         if self.number_of_edges == 0:
             return []
         if self.number_of_edges == 1:
-            return [self.__calc_distance(self.points[0], self.points[1])]
+            return [calc_distance(self.points[0], self.points[1])]
         else:
             edge_list = []
             for i in range(self.number_of_vertices()):
                 if i == self.number_of_vertices() - 1:
-                    edge_list.append(self.__calc_distance(self.points[i], self.points[0]))
+                    edge_list.append(calc_distance(self.points[i], self.points[0]))
                 else:
-                    edge_list.append(self.__calc_distance(self.points[i], self.points[i + 1]))
+                    edge_list.append(calc_distance(self.points[i], self.points[i + 1]))
             return edge_list
-
-    # To find orientation of ordered triplet (p, q, r).
-    # The function returns following values
-    # 0 --> p, q and r are collinear
-    # 1 --> Clockwise
-    # 2 --> Counterclockwise
-    def __orientation(self, pa, pb, pc):
-        value = (pb[1] - pa[1]) * (pc[0] - pb[0]) - (pb[0] - pa[0]) * (pc[1] - pb[1])
-        if value == 0:
-            return 0  # Collinear
-        elif value > 0:
-            return 1  # Clockwise
-        else:
-            return 2  # Counterclockwise
-
-    def __compare(self, point0, point1, point2):
-        o = self.__orientation(point0, point1, point2)
-        if o == 0:
-            if self.__calc_distance(point0, point2) >= self.__calc_distance(point0, point1):
-                return -1
-            else:
-                return 1
-        elif o == 2:
-            return -1
-        else:
-            return 1
-
-    def __convex_hull(self, points):
-        # Find the bottom-most point
-        ymin = points[0][1]
-        min_i = 0
-        for i, point in enumerate(points):
-            y = point[1]
-            if y < ymin or (y == ymin and point[0] < points[min_i][0]):
-                ymin = y
-                min_i = i
-
-        # Place the bottom-most point at first position
-        tmp = points[0]
-        points[0] = points[min_i]
-        points[min_i] = tmp
-
-        # Order points in counterclockwise
-        points = [points[0]] + sorted(points[1:], key=cmp_to_key(lambda p1, p2: self.__compare(points[0], p1, p2)))
-
-        # If two or more points are collinear, we will remove all the points in the middle
-        # The compare function puts the farthest point at the end
-        points_without_collinear = []
-        for i in range(len(points)):
-            if 0 < i < len(points) - 1 and self.__orientation(points[0], points[i], points[i + 1]) == 0:
-                continue
-            points_without_collinear.append(points[i])
-
-        points = points_without_collinear
-
-        # If we have less than 3 vertices, we don't need to do more calculus.
-        if len(points) < 3:
-            return points
-
-        # Create an empty stack with the 3 first points
-        stack = []
-        for p in points[:3]:
-            stack.append(p)
-
-        # Iterate every vertex to check if it can form part of the convex hull.
-        for i in range(3, len(points)):
-            while self.__orientation(stack[len(stack) - 2], stack[len(stack) - 1], points[i]) != 2:
-                stack.pop()
-            stack.append(points[i])
-
-        return stack
