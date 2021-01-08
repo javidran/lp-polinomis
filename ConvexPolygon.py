@@ -1,6 +1,7 @@
 import math
 from PIL import Image, ImageDraw
 from functools import cmp_to_key
+from random import random
 
 
 def calc_distance(point_a, point_b):
@@ -89,6 +90,20 @@ class ConvexPolygon:
 
     def __str__(self):
         return str(self.points)
+
+    def __distance_list(self):
+        if self.number_of_edges == 0:
+            return []
+        if self.number_of_edges == 1:
+            return [calc_distance(self.points[0], self.points[1])]
+        else:
+            edge_list = []
+            for i in range(self.number_of_vertices()):
+                if i == self.number_of_vertices() - 1:
+                    edge_list.append(calc_distance(self.points[i], self.points[0]))
+                else:
+                    edge_list.append(calc_distance(self.points[i], self.points[i + 1]))
+            return edge_list
 
     def get_vertices(self):
         return self.points.copy()
@@ -235,16 +250,9 @@ class ConvexPolygon:
         img_draw.polygon(self.points, fill="#ffff33", outline="blue")
         img.save("nameImage.png")
 
-    def __distance_list(self):
-        if self.number_of_edges == 0:
-            return []
-        if self.number_of_edges == 1:
-            return [calc_distance(self.points[0], self.points[1])]
-        else:
-            edge_list = []
-            for i in range(self.number_of_vertices()):
-                if i == self.number_of_vertices() - 1:
-                    edge_list.append(calc_distance(self.points[i], self.points[0]))
-                else:
-                    edge_list.append(calc_distance(self.points[i], self.points[i + 1]))
-            return edge_list
+    @staticmethod
+    def random(number_of_vertices):
+        point_list = []
+        for _ in number_of_vertices:
+            point_list.append((random(), random()))
+        return ConvexPolygon(point_list)
