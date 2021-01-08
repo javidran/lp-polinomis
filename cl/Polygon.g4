@@ -1,6 +1,6 @@
 grammar Polygon;
 
-root : assig printsmth area perimeter vertices centroid inside equal draw color EOF;
+root : (assig | printsmth | area | perimeter | vertices | centroid | inside | equal | draw | color)* EOF;
 
 string: QUOTE STRING QUOTE;
 

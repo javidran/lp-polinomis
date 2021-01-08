@@ -1,5 +1,9 @@
 # LP - Projecte Polinomis
 
+```
+antlr4 -Dlanguage=Python3 -no-listener -visitor Polygon.g4
+```
+
 One Paragraph of project description goes here
 
 ## Getting Started

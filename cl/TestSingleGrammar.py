@@ -3,7 +3,7 @@ from PolygonLexer import PolygonLexer
 from PolygonParser import PolygonParser
 from PolygonVisitorEval import PolygonVisitorEval
 
-input_stream = FileStream("script.txt")
+input_stream = InputStream(input('? '))
 lexer = PolygonLexer(input_stream)
 token_stream = CommonTokenStream(lexer)
 parser = PolygonParser(token_stream)
