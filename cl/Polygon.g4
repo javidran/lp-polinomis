@@ -70,7 +70,7 @@ INSIDE: 'inside';
 EQUAL: 'equal';
 DRAW: 'draw';
 
-STRING : [a-zA-Z0-9_.]+;
-ID : [a-zA-Z] [a-zA-Z0-9_]*;
+STRING : [0-9A-Za-z._\-]+ ;
+ID : [a-zA-Z] [a-zA-Z0-9_]* ;
 COMMENT : '//' ~[\r\n]* -> skip ;
 WS : [ \r\n\t]+ -> skip ;
