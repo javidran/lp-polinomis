@@ -90,7 +90,7 @@ class PolygonVisitorEval(PolygonVisitor):
     def visitDraw(self, ctx: PolygonParser.DrawContext):
         filename = self.visit(ctx.getChild(1))
         polygon_list = []
-        for i in range(3, ctx.getChildCount() - 1, 2):
+        for i in range(3, ctx.getChildCount(), 2):
             polygon_list.append(self.visit(ctx.getChild(i)))
         ConvexPolygon.draw(filename, polygon_list)
 

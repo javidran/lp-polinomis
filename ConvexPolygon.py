@@ -164,7 +164,7 @@ class ConvexPolygon:
         self.color = tuple(map(to_int, color))
 
     def get_vertices(self):
-        return self.points.copy()  # TODO Eliminar copy
+        return self.points.copy()
 
     def number_of_vertices(self):
         return len(self.points)
@@ -202,8 +202,6 @@ class ConvexPolygon:
         return union.get_vertices() == self.get_vertices()
 
     def intersect(self, convex_polygon):
-        return self.union(convex_polygon)
-
         def inside(p):
             return (cp2[0] - cp1[0]) * (p[1] - cp1[1]) > (cp2[1] - cp1[1]) * (p[0] - cp1[0])
 
@@ -213,16 +211,19 @@ class ConvexPolygon:
             n1 = cp1[0] * cp2[1] - cp1[1] * cp2[0]
             n2 = s[0] * e[1] - s[1] * e[0]
             n3 = 1.0 / (dc[0] * dp[1] - dc[1] * dp[0])
-            return [(n1 * dp[0] - n2 * dc[0]) * n3, (n1 * dp[1] - n2 * dc[1]) * n3]
+            return (n1 * dp[0] - n2 * dc[0]) * n3, (n1 * dp[1] - n2 * dc[1]) * n3
 
-        outputList = self.get_vertices()
-        cp1 = convex_polygon.get_vertices()[0]
+        subjectPolygon = self.get_vertices()
+        clipPolygon = convex_polygon.get_vertices()
 
-        for clipVertex in convex_polygon.get_vertices():
+        outputList = subjectPolygon
+        cp1 = clipPolygon[-1]
+
+        for clipVertex in clipPolygon:
             cp2 = clipVertex
             inputList = outputList
             outputList = []
-            s = inputList[0]
+            s = inputList[-1]
 
             for subjectVertex in inputList:
                 e = subjectVertex
@@ -231,10 +232,11 @@ class ConvexPolygon:
                         outputList.append(computeIntersection())
                     outputList.append(e)
                 elif inside(s):
-                    outputList.append(computeareaIntersection())
+                    outputList.append(computeIntersection())
                 s = e
             cp1 = cp2
-        return (outputList)
+
+        return ConvexPolygon(outputList)
 
     def contains_point(self, point):
         for i in range(self.number_of_vertices()):

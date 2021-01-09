@@ -7,5 +7,6 @@ pointlist_2 = [(0, 0), (1, 0), (1, 1)]
 cp = ConvexPolygon(pointlist)
 cp2 = ConvexPolygon(pointlist_2)
 
-print(cp.intersect(cp2))
-cp.draw_polygon()
+cp3 = cp.intersect(cp2)
+print(cp3)
+cp3.draw_polygon("intersect.png")
