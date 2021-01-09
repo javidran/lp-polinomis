@@ -8,4 +8,4 @@ cp = ConvexPolygon(pointlist)
 cp2 = ConvexPolygon(pointlist_2)
 
 print(cp.contains_convex_polygon(cp2))
-cp.draw_polygon()
+cp.draw_polygon("prueba.png")

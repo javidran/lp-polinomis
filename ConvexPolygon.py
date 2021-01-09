@@ -24,7 +24,6 @@ def orientation(pa, pb, pc):
 
 
 def convex_hull(points):
-
     def compare(point0, point1, point2):
         o = orientation(point0, point1, point2)
         if o == 0:
@@ -82,8 +81,49 @@ def convex_hull(points):
     return stack
 
 
+def get_square_bounding_box(bounding_box):
+    xmin = bounding_box[0][0]
+    ymin = bounding_box[0][1]
+
+    # Calculate biggest distance in order to create a square box
+    dist_x = bounding_box[1][0] - xmin
+    dist_y = bounding_box[1][1] - ymin
+    dist = (dist_x if dist_x > dist_y else dist_y)
+
+    # Create global bounding box
+    return [(xmin, ymin), (xmin + dist, ymin + dist)]
+
+
+def get_draw_coordinates(square_bounding_box, point_list):
+    def get_point_draw_coordinates(point):
+        def get_proportion_dist(coord, initial_coord, dist):
+            return float((coord - initial_coord) / dist)
+
+        def get_img_point(coord_prop, dist, start):
+            return float(coord_prop * dist + start)
+
+        ref_dist = square_bounding_box[1][0] - square_bounding_box[0][0]
+        x_proportion_dist = get_proportion_dist(point[0], square_bounding_box[0][0], ref_dist)
+        y_proportion_dist = get_proportion_dist(point[1], square_bounding_box[0][1], ref_dist)
+
+        img_max = 399
+        img_min = 1
+        img_dist = img_max - img_min
+
+        x = get_img_point(x_proportion_dist, img_dist, img_min)
+        y = get_img_point(y_proportion_dist, img_dist, img_min)
+        return x, y
+
+    draw_points = []
+    for p in point_list:
+        draw_points.append(get_point_draw_coordinates(p))
+
+    return draw_points
+
+
 class ConvexPolygon:
     points = None
+    color = (59, 163, 188)
 
     def __init__(self, points):
         self.points = convex_hull(list(dict.fromkeys(points)))
@@ -114,8 +154,14 @@ class ConvexPolygon:
                     edge_list.append(calc_distance(self.points[i], self.points[i + 1]))
             return edge_list
 
+    def get_color(self):
+        return self.color
+
+    def set_color(self, color):
+        self.color = color
+
     def get_vertices(self):
-        return self.points.copy()
+        return self.points.copy()  # TODO Eliminar copy
 
     def number_of_vertices(self):
         return len(self.points)
@@ -137,7 +183,9 @@ class ConvexPolygon:
 
         reference_angle = get_angle(self.points[0], self.points[1], self.points[2])
         for i in range(self.number_of_vertices()):
-            if 0 < i < self.number_of_vertices()-3 and reference_angle != get_angle(self.points[i], self.points[i+1], self.points[i+2]):
+            if 0 < i < self.number_of_vertices() - 3 and reference_angle != get_angle(self.points[i],
+                                                                                      self.points[i + 1],
+                                                                                      self.points[i + 2]):
                 return False
         return True
 
@@ -151,6 +199,8 @@ class ConvexPolygon:
         return union.get_vertices() == self.get_vertices()
 
     def intersect(self, convex_polygon):
+        return self.union(convex_polygon)
+
         def inside(p):
             return (cp2[0] - cp1[0]) * (p[1] - cp1[1]) > (cp2[1] - cp1[1]) * (p[0] - cp1[0])
 
@@ -195,7 +245,7 @@ class ConvexPolygon:
         det = 0
 
         for i in range(self.number_of_vertices()):
-            if i+1 == self.number_of_vertices():
+            if i + 1 == self.number_of_vertices():
                 j = 0
             else:
                 j = i + 1
@@ -203,17 +253,17 @@ class ConvexPolygon:
             temp_det = self.points[i][0] * self.points[j][1] - self.points[j][0] * self.points[i][1]
             det += temp_det
 
-            centroid_x += (self.points[i][0] + self.points[j][0])*temp_det
-            centroid_y += (self.points[i][1] + self.points[j][1])*temp_det
+            centroid_x += (self.points[i][0] + self.points[j][0]) * temp_det
+            centroid_y += (self.points[i][1] + self.points[j][1]) * temp_det
 
-        centroid_x /= 3*det
-        centroid_y /= 3*det
+        centroid_x /= 3 * det
+        centroid_y /= 3 * det
 
         return round(centroid_x, 3), round(centroid_y, 3)
 
     def get_area(self):
         area = 0
-        j = self.number_of_vertices()-1
+        j = self.number_of_vertices() - 1
 
         for i in range(self.number_of_vertices()):
             area += (self.points[j][0] + self.points[i][0]) * (self.points[j][1] - self.points[i][1])
@@ -222,6 +272,9 @@ class ConvexPolygon:
         return round(abs(area / 2.0), 3)
 
     def get_bounding_box(self):
+        if self.number_of_vertices() == 0:
+            return None
+
         xmin = self.points[0][0]
         ymin = self.points[0][1]
         xmax = self.points[0][0]
@@ -239,16 +292,63 @@ class ConvexPolygon:
 
         return [(xmin, ymin), (xmax, ymax)]
 
-    def draw_polygon(self):
-        img_resolution = []
-        bounding_box = self.get_bounding_box()
-        img_resolution.append(bounding_box[1][0] - bounding_box[0][0])
-        img_resolution.append(bounding_box[1][1] - bounding_box[0][1])
+    def draw_polygon(self, filename):
+        b_box = get_square_bounding_box(self.get_bounding_box())
 
-        img = Image.new("RGB", img_resolution, "white")
-        img_draw = ImageDraw.Draw(img)
-        img_draw.polygon(self.points, fill="#ffff33", outline="blue")
-        img.save("nameImage.png")
+        img = Image.new("RGB", [400, 400], "white")
+        img_draw = ImageDraw.Draw(img, "RGBA")
+        img_draw.polygon(get_draw_coordinates(b_box, self.points), fill=self.color + (50,), outline=self.color + (255,))
+        img = img.transpose(Image.FLIP_TOP_BOTTOM)
+        img.save(filename)
+
+    @staticmethod
+    def draw(filename, polygon_list):
+        def create_global_box(reference_box):
+            xmin = reference_box[0][0]
+            ymin = reference_box[0][1]
+            xmax = reference_box[1][0]
+            ymax = reference_box[1][0]
+
+            # Iterate over the other bounding boxes and get the biggest size
+            for p in polygon_list[1:]:
+                box = p.get_bounding_box()
+                if box is None:
+                    continue
+                if box[0][0] < xmin:
+                    xmin = box[0][0]
+                if box[0][1] < ymin:
+                    ymin = box[0][1]
+                if box[1][0] > xmax:
+                    xmax = box[1][0]
+                if box[1][0] > ymax:
+                    ymax = box[1][0]
+
+            bounding_box = [(xmin, ymin), (xmax, ymax)]
+            return get_square_bounding_box(bounding_box)
+
+        global_box = None
+
+        # Search for first bounding box
+        for i, polygon in enumerate(polygon_list):
+            first_box = polygon.get_bounding_box()
+            if first_box is not None:
+                global_box = create_global_box(first_box)
+                break
+
+        # If no box is defined, raise an exception
+        if global_box is None:
+            raise Exception("There are not vertices to print.")
+
+        img = Image.new("RGB", [400, 400], "white")
+        img_draw = ImageDraw.Draw(img, "RGBA")
+
+        for polygon in polygon_list:
+            color = polygon.get_color()
+            points = polygon.get_vertices()
+            img_draw.polygon(get_draw_coordinates(global_box, points), fill=color + (50,), outline=color + (255,))
+
+        img = img.transpose(Image.FLIP_TOP_BOTTOM)
+        img.save(filename)
 
     @staticmethod
     def random(number_of_vertices):

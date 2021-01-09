@@ -79,6 +79,17 @@ class PolygonVisitorEval(PolygonVisitor):
         b = self.visit(ctx.getChild(2))
         print("yes") if a == b else print("no")
 
+    def visitDraw(self, ctx: PolygonParser.DrawContext):
+        filename = self.visit(ctx.getChild(1))
+        polygon_list = []
+        for i in range(3, ctx.getChildCount() - 1, 2):
+            polygon_list.append(self.visit(ctx.getChild(i)))
+        ConvexPolygon.draw(filename, polygon_list)
+
     def visitColornum(self, ctx:PolygonParser.ColornumContext):
         return float(ctx.getChild(0)), float(ctx.getChild(1)), float(ctx.getChild(2))
 
+    def visitColor(self, ctx: PolygonParser.ColorContext):
+        polygon = self.visit(ctx.getChild(1))
+        color = self.visit(ctx.getChild(4))
+        polygon.set_color(color)
