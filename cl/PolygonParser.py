@@ -12,7 +12,7 @@ else:
 def serializedATN():
     with StringIO() as buf:
         buf.write("\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\36")
-        buf.write("\u008b\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7")
+        buf.write("\u0094\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7")
         buf.write("\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t\13\4\f\t\f\4\r\t\r\4\16")
         buf.write("\t\16\4\17\t\17\4\20\t\20\3\2\3\2\3\2\3\2\3\2\3\2\3\2")
         buf.write("\3\2\3\2\3\2\7\2+\n\2\f\2\16\2.\13\2\3\2\3\2\3\3\3\3\3")
@@ -20,23 +20,24 @@ def serializedATN():
         buf.write("\5\f\5\16\5C\13\5\3\5\3\5\3\5\3\5\3\5\3\5\5\5K\n\5\3\5")
         buf.write("\3\5\3\5\3\5\3\5\3\5\7\5S\n\5\f\5\16\5V\13\5\3\6\3\6\3")
         buf.write("\6\3\6\3\7\3\7\3\7\3\7\5\7`\n\7\3\b\3\b\3\b\3\t\3\t\3")
-        buf.write("\t\3\n\3\n\3\n\3\13\3\13\3\13\3\f\3\f\3\f\3\f\3\f\3\r")
-        buf.write("\3\r\3\r\3\r\3\r\3\16\3\16\3\16\3\16\6\16|\n\16\r\16\16")
-        buf.write("\16}\3\17\3\17\3\17\3\17\3\20\3\20\3\20\3\20\3\20\3\20")
-        buf.write("\3\20\3\20\2\3\b\21\2\4\6\b\n\f\16\20\22\24\26\30\32\34")
-        buf.write("\36\2\2\2\u008e\2,\3\2\2\2\4\61\3\2\2\2\6\65\3\2\2\2\b")
-        buf.write("J\3\2\2\2\nW\3\2\2\2\f_\3\2\2\2\16a\3\2\2\2\20d\3\2\2")
-        buf.write("\2\22g\3\2\2\2\24j\3\2\2\2\26m\3\2\2\2\30r\3\2\2\2\32")
-        buf.write("w\3\2\2\2\34\177\3\2\2\2\36\u0083\3\2\2\2 +\5\n\6\2!+")
-        buf.write("\5\f\7\2\"+\5\16\b\2#+\5\20\t\2$+\5\22\n\2%+\5\24\13\2")
-        buf.write("&+\5\26\f\2\'+\5\30\r\2(+\5\32\16\2)+\5\36\20\2* \3\2")
-        buf.write("\2\2*!\3\2\2\2*\"\3\2\2\2*#\3\2\2\2*$\3\2\2\2*%\3\2\2")
-        buf.write("\2*&\3\2\2\2*\'\3\2\2\2*(\3\2\2\2*)\3\2\2\2+.\3\2\2\2")
-        buf.write(",*\3\2\2\2,-\3\2\2\2-/\3\2\2\2.,\3\2\2\2/\60\7\2\2\3\60")
-        buf.write("\3\3\2\2\2\61\62\7\21\2\2\62\63\7\34\2\2\63\64\7\21\2")
-        buf.write("\2\64\5\3\2\2\2\65\66\7\3\2\2\66\67\7\3\2\2\67\7\3\2\2")
-        buf.write("\289\b\5\1\29:\7\5\2\2:;\5\b\5\2;<\7\6\2\2<K\3\2\2\2=")
-        buf.write("A\7\7\2\2>@\5\6\4\2?>\3\2\2\2@C\3\2\2\2A?\3\2\2\2AB\3")
+        buf.write("\t\3\n\3\n\3\n\3\13\3\13\3\13\3\f\3\f\3\f\3\f\3\f\3\f")
+        buf.write("\3\f\3\f\3\f\3\f\3\f\3\f\5\fz\n\f\3\r\3\r\3\r\3\r\3\r")
+        buf.write("\3\16\3\16\3\16\3\16\6\16\u0085\n\16\r\16\16\16\u0086")
+        buf.write("\3\17\3\17\3\17\3\17\3\20\3\20\3\20\3\20\3\20\3\20\3\20")
+        buf.write("\3\20\2\3\b\21\2\4\6\b\n\f\16\20\22\24\26\30\32\34\36")
+        buf.write("\2\2\2\u0098\2,\3\2\2\2\4\61\3\2\2\2\6\65\3\2\2\2\bJ\3")
+        buf.write("\2\2\2\nW\3\2\2\2\f_\3\2\2\2\16a\3\2\2\2\20d\3\2\2\2\22")
+        buf.write("g\3\2\2\2\24j\3\2\2\2\26y\3\2\2\2\30{\3\2\2\2\32\u0080")
+        buf.write("\3\2\2\2\34\u0088\3\2\2\2\36\u008c\3\2\2\2 +\5\n\6\2!")
+        buf.write("+\5\f\7\2\"+\5\16\b\2#+\5\20\t\2$+\5\22\n\2%+\5\24\13")
+        buf.write("\2&+\5\26\f\2\'+\5\30\r\2(+\5\32\16\2)+\5\36\20\2* \3")
+        buf.write("\2\2\2*!\3\2\2\2*\"\3\2\2\2*#\3\2\2\2*$\3\2\2\2*%\3\2")
+        buf.write("\2\2*&\3\2\2\2*\'\3\2\2\2*(\3\2\2\2*)\3\2\2\2+.\3\2\2")
+        buf.write("\2,*\3\2\2\2,-\3\2\2\2-/\3\2\2\2.,\3\2\2\2/\60\7\2\2\3")
+        buf.write("\60\3\3\2\2\2\61\62\7\21\2\2\62\63\7\34\2\2\63\64\7\21")
+        buf.write("\2\2\64\5\3\2\2\2\65\66\7\3\2\2\66\67\7\3\2\2\67\7\3\2")
+        buf.write("\2\289\b\5\1\29:\7\5\2\2:;\5\b\5\2;<\7\6\2\2<K\3\2\2\2")
+        buf.write("=A\7\7\2\2>@\5\6\4\2?>\3\2\2\2@C\3\2\2\2A?\3\2\2\2AB\3")
         buf.write("\2\2\2BD\3\2\2\2CA\3\2\2\2DK\7\b\2\2EF\7\17\2\2FK\7\3")
         buf.write("\2\2GH\7\16\2\2HK\5\b\5\4IK\7\33\2\2J8\3\2\2\2J=\3\2\2")
         buf.write("\2JE\3\2\2\2JG\3\2\2\2JI\3\2\2\2KT\3\2\2\2LM\f\7\2\2M")
@@ -47,14 +48,18 @@ def serializedATN():
         buf.write("\2\2_]\3\2\2\2`\r\3\2\2\2ab\7\23\2\2bc\5\b\5\2c\17\3\2")
         buf.write("\2\2de\7\24\2\2ef\5\b\5\2f\21\3\2\2\2gh\7\25\2\2hi\5\b")
         buf.write("\5\2i\23\3\2\2\2jk\7\26\2\2kl\5\b\5\2l\25\3\2\2\2mn\7")
-        buf.write("\30\2\2no\5\b\5\2op\7\20\2\2pq\5\b\5\2q\27\3\2\2\2rs\7")
-        buf.write("\31\2\2st\5\b\5\2tu\7\20\2\2uv\5\b\5\2v\31\3\2\2\2wx\7")
-        buf.write("\32\2\2x{\5\4\3\2yz\7\20\2\2z|\5\b\5\2{y\3\2\2\2|}\3\2")
-        buf.write("\2\2}{\3\2\2\2}~\3\2\2\2~\33\3\2\2\2\177\u0080\7\3\2\2")
-        buf.write("\u0080\u0081\7\3\2\2\u0081\u0082\7\3\2\2\u0082\35\3\2")
-        buf.write("\2\2\u0083\u0084\7\27\2\2\u0084\u0085\5\b\5\2\u0085\u0086")
-        buf.write("\7\20\2\2\u0086\u0087\7\t\2\2\u0087\u0088\5\34\17\2\u0088")
-        buf.write("\u0089\7\n\2\2\u0089\37\3\2\2\2\n*,AJRT_}")
+        buf.write("\30\2\2no\7\7\2\2op\5\6\4\2pq\7\b\2\2qr\7\20\2\2rs\5\b")
+        buf.write("\5\2sz\3\2\2\2tu\7\30\2\2uv\5\b\5\2vw\7\20\2\2wx\5\b\5")
+        buf.write("\2xz\3\2\2\2ym\3\2\2\2yt\3\2\2\2z\27\3\2\2\2{|\7\31\2")
+        buf.write("\2|}\5\b\5\2}~\7\20\2\2~\177\5\b\5\2\177\31\3\2\2\2\u0080")
+        buf.write("\u0081\7\32\2\2\u0081\u0084\5\4\3\2\u0082\u0083\7\20\2")
+        buf.write("\2\u0083\u0085\5\b\5\2\u0084\u0082\3\2\2\2\u0085\u0086")
+        buf.write("\3\2\2\2\u0086\u0084\3\2\2\2\u0086\u0087\3\2\2\2\u0087")
+        buf.write("\33\3\2\2\2\u0088\u0089\7\3\2\2\u0089\u008a\7\3\2\2\u008a")
+        buf.write("\u008b\7\3\2\2\u008b\35\3\2\2\2\u008c\u008d\7\27\2\2\u008d")
+        buf.write("\u008e\5\b\5\2\u008e\u008f\7\20\2\2\u008f\u0090\7\t\2")
+        buf.write("\2\u0090\u0091\5\34\17\2\u0091\u0092\7\n\2\2\u0092\37")
+        buf.write("\3\2\2\2\13*,AJRT_y\u0086")
         return buf.getvalue()
 
 
@@ -981,28 +986,66 @@ class PolygonParser ( Parser ):
             super().__init__(parent, invokingState)
             self.parser = parser
 
+
+        def getRuleIndex(self):
+            return PolygonParser.RULE_inside
+
+     
+        def copyFrom(self, ctx:ParserRuleContext):
+            super().copyFrom(ctx)
+
+
+
+    class InsidepolygonContext(InsideContext):
+
+        def __init__(self, parser, ctx:ParserRuleContext): # actually a PolygonParser.InsideContext
+            super().__init__(parser)
+            self.copyFrom(ctx)
+
         def INSIDE(self):
             return self.getToken(PolygonParser.INSIDE, 0)
-
         def polygon(self, i:int=None):
             if i is None:
                 return self.getTypedRuleContexts(PolygonParser.PolygonContext)
             else:
                 return self.getTypedRuleContext(PolygonParser.PolygonContext,i)
 
-
         def COMMA(self):
             return self.getToken(PolygonParser.COMMA, 0)
 
-        def getRuleIndex(self):
-            return PolygonParser.RULE_inside
-
         def accept(self, visitor:ParseTreeVisitor):
-            if hasattr( visitor, "visitInside" ):
-                return visitor.visitInside(self)
+            if hasattr( visitor, "visitInsidepolygon" ):
+                return visitor.visitInsidepolygon(self)
             else:
                 return visitor.visitChildren(self)
 
+
+    class InsidepointContext(InsideContext):
+
+        def __init__(self, parser, ctx:ParserRuleContext): # actually a PolygonParser.InsideContext
+            super().__init__(parser)
+            self.copyFrom(ctx)
+
+        def INSIDE(self):
+            return self.getToken(PolygonParser.INSIDE, 0)
+        def LBRACKET(self):
+            return self.getToken(PolygonParser.LBRACKET, 0)
+        def point(self):
+            return self.getTypedRuleContext(PolygonParser.PointContext,0)
+
+        def RBRACKET(self):
+            return self.getToken(PolygonParser.RBRACKET, 0)
+        def COMMA(self):
+            return self.getToken(PolygonParser.COMMA, 0)
+        def polygon(self):
+            return self.getTypedRuleContext(PolygonParser.PolygonContext,0)
+
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitInsidepoint" ):
+                return visitor.visitInsidepoint(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -1011,15 +1054,40 @@ class PolygonParser ( Parser ):
         localctx = PolygonParser.InsideContext(self, self._ctx, self.state)
         self.enterRule(localctx, 20, self.RULE_inside)
         try:
-            self.enterOuterAlt(localctx, 1)
-            self.state = 107
-            self.match(PolygonParser.INSIDE)
-            self.state = 108
-            self.polygon(0)
-            self.state = 109
-            self.match(PolygonParser.COMMA)
-            self.state = 110
-            self.polygon(0)
+            self.state = 119
+            self._errHandler.sync(self)
+            la_ = self._interp.adaptivePredict(self._input,7,self._ctx)
+            if la_ == 1:
+                localctx = PolygonParser.InsidepointContext(self, localctx)
+                self.enterOuterAlt(localctx, 1)
+                self.state = 107
+                self.match(PolygonParser.INSIDE)
+                self.state = 108
+                self.match(PolygonParser.LBRACKET)
+                self.state = 109
+                self.point()
+                self.state = 110
+                self.match(PolygonParser.RBRACKET)
+                self.state = 111
+                self.match(PolygonParser.COMMA)
+                self.state = 112
+                self.polygon(0)
+                pass
+
+            elif la_ == 2:
+                localctx = PolygonParser.InsidepolygonContext(self, localctx)
+                self.enterOuterAlt(localctx, 2)
+                self.state = 114
+                self.match(PolygonParser.INSIDE)
+                self.state = 115
+                self.polygon(0)
+                self.state = 116
+                self.match(PolygonParser.COMMA)
+                self.state = 117
+                self.polygon(0)
+                pass
+
+
         except RecognitionException as re:
             localctx.exception = re
             self._errHandler.reportError(self, re)
@@ -1067,13 +1135,13 @@ class PolygonParser ( Parser ):
         self.enterRule(localctx, 22, self.RULE_equal)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 112
+            self.state = 121
             self.match(PolygonParser.EQUAL)
-            self.state = 113
+            self.state = 122
             self.polygon(0)
-            self.state = 114
+            self.state = 123
             self.match(PolygonParser.COMMA)
-            self.state = 115
+            self.state = 124
             self.polygon(0)
         except RecognitionException as re:
             localctx.exception = re
@@ -1130,19 +1198,19 @@ class PolygonParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 117
+            self.state = 126
             self.match(PolygonParser.DRAW)
-            self.state = 118
+            self.state = 127
             self.string()
-            self.state = 121 
+            self.state = 130 
             self._errHandler.sync(self)
             _la = self._input.LA(1)
             while True:
-                self.state = 119
+                self.state = 128
                 self.match(PolygonParser.COMMA)
-                self.state = 120
+                self.state = 129
                 self.polygon(0)
-                self.state = 123 
+                self.state = 132 
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
                 if not (_la==PolygonParser.COMMA):
@@ -1188,11 +1256,11 @@ class PolygonParser ( Parser ):
         self.enterRule(localctx, 26, self.RULE_colornum)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 125
+            self.state = 134
             self.match(PolygonParser.NUM)
-            self.state = 126
+            self.state = 135
             self.match(PolygonParser.NUM)
-            self.state = 127
+            self.state = 136
             self.match(PolygonParser.NUM)
         except RecognitionException as re:
             localctx.exception = re
@@ -1248,17 +1316,17 @@ class PolygonParser ( Parser ):
         self.enterRule(localctx, 28, self.RULE_color)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 129
+            self.state = 138
             self.match(PolygonParser.COLOR)
-            self.state = 130
+            self.state = 139
             self.polygon(0)
-            self.state = 131
+            self.state = 140
             self.match(PolygonParser.COMMA)
-            self.state = 132
+            self.state = 141
             self.match(PolygonParser.LCLAUDATOR)
-            self.state = 133
+            self.state = 142
             self.colornum()
-            self.state = 134
+            self.state = 143
             self.match(PolygonParser.RCLAUDATOR)
         except RecognitionException as re:
             localctx.exception = re

@@ -29,7 +29,9 @@ vertices: VERTICES polygon;
 
 centroid: CENTROID polygon;
 
-inside: INSIDE polygon COMMA polygon;
+inside: INSIDE LBRACKET point RBRACKET COMMA polygon        #insidepoint
+    | INSIDE polygon COMMA polygon                          #insidepolygon
+    ;
 
 equal: EQUAL polygon COMMA polygon;
 

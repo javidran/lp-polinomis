@@ -72,7 +72,12 @@ class PolygonVisitorEval(PolygonVisitor):
         centroid = polygon.get_centroid()
         print(format(centroid[0], ".3f") + " " + format(centroid[0], ".3f"))
 
-    def visitInside(self, ctx: PolygonParser.InsideContext):
+    def visitInsidepoint(self, ctx: PolygonParser.InsideContext):
+        a = self.visit(ctx.getChild(2))
+        b = self.visit(ctx.getChild(5))
+        print("yes") if b.contains_point(a) else print("no")
+
+    def visitInsidepolygon(self, ctx: PolygonParser.InsideContext):
         a = self.visit(ctx.getChild(1))
         b = self.visit(ctx.getChild(3))
         print("yes") if a.contains_convex_polygon(b) else print("no")

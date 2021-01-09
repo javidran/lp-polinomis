@@ -89,8 +89,13 @@ class PolygonVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by PolygonParser#inside.
-    def visitInside(self, ctx:PolygonParser.InsideContext):
+    # Visit a parse tree produced by PolygonParser#insidepoint.
+    def visitInsidepoint(self, ctx:PolygonParser.InsidepointContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by PolygonParser#insidepolygon.
+    def visitInsidepolygon(self, ctx:PolygonParser.InsidepolygonContext):
         return self.visitChildren(ctx)
 
 

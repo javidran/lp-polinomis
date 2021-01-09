@@ -238,7 +238,7 @@ class ConvexPolygon:
 
     def contains_point(self, point):
         for i in range(self.number_of_vertices()):
-            if 0 < i < self.number_of_vertices() - 1 and orientation(self.points[i], self.points[i + 1], point) == 1:
+            if 0 < i < self.number_of_vertices() - 1 and orientation(self.points[i], self.points[i + 1], point) == 2:
                 return False
         return True
 
