@@ -56,11 +56,13 @@ def convex_hull(points):
     # If two or more points are collinear, we will remove all the points in the middle
     # The compare function puts the farthest point at the end
     points_without_collinear = []
-    for i in range(len(points)):
-        if 0 < i < len(points) - 1 and orientation(points[0], points[i], points[i + 1]) == 0:
+    for i in range(1, len(points)):
+        if i < len(points) - 1 and orientation(points[0], points[i], points[i + 1]) == 0:
             continue
         points_without_collinear.append(points[i])
 
+    points_without_collinear.append(points[0])
+    points_without_collinear.reverse()
     points = points_without_collinear
 
     # If we have less than 3 vertices, we don't need to do more calculus.
@@ -74,7 +76,7 @@ def convex_hull(points):
 
     # Iterate every vertex to check if it can form part of the convex hull.
     for i in range(3, len(points)):
-        while orientation(stack[len(stack) - 2], stack[len(stack) - 1], points[i]) != 2:
+        while len(stack) > 1 and orientation(stack[-2], stack[-1], points[i]) != 2:
             stack.pop()
         stack.append(points[i])
 
@@ -137,8 +139,8 @@ class ConvexPolygon:
         sequence = ""
         for point in self.points:
             for coord in point:
-                sequence += " " + str(round(coord, 3))
-        return sequence
+                sequence += str(round(coord, 3)) + " "
+        return sequence.rstrip()
 
     def __distance_list(self):
         if self.number_of_vertices() <= 1:
@@ -228,7 +230,7 @@ class ConvexPolygon:
                         outputList.append(computeIntersection())
                     outputList.append(e)
                 elif inside(s):
-                    outputList.append(computeIntersection())
+                    outputList.append(computeareaIntersection())
                 s = e
             cp1 = cp2
         return (outputList)

@@ -54,13 +54,13 @@ class PolygonVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by PolygonParser#assig.
-    def visitAssig(self, ctx:PolygonParser.AssigContext):
+    # Visit a parse tree produced by PolygonParser#bounding.
+    def visitBounding(self, ctx:PolygonParser.BoundingContext):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by PolygonParser#assignedid.
-    def visitAssignedid(self, ctx:PolygonParser.AssignedidContext):
+    # Visit a parse tree produced by PolygonParser#assig.
+    def visitAssig(self, ctx:PolygonParser.AssigContext):
         return self.visitChildren(ctx)
 
 

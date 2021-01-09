@@ -16,14 +16,14 @@ class PolygonVisitorEval(PolygonVisitor):
         return ctx.getChild(1)
 
     def visitPoint(self, ctx: PolygonParser.PointContext):
-        return float(ctx.getChild(0)), float(ctx.getChild(1))
+        return float(ctx.getChild(0).getText()), float(ctx.getChild(1).getText())
 
     def visitRandom(self, ctx: PolygonParser.RandomContext):
         return ConvexPolygon.random(int(ctx.getChild(1)))
 
     def visitNewpolygon(self, ctx: PolygonParser.NewpolygonContext):
         point_list = []
-        for i in range(1, ctx.getChildCount() - 2):
+        for i in range(1, ctx.getChildCount() - 1):
             point_list.append(self.visit(ctx.getChild(i)))
         return ConvexPolygon(point_list)
 
@@ -38,20 +38,22 @@ class PolygonVisitorEval(PolygonVisitor):
         return a.intersect(b)
 
     def visitPolygonid(self, ctx: PolygonParser.PolygonidContext):
-        return self.visit(ctx.getChild(0))
+        id = ctx.getChild(0).getText()
+        return self.polygons[id]
 
     def visitPriority(self, ctx: PolygonParser.PriorityContext):
         return self.visit(ctx.getChild(1))
 
     def visitAssig(self, ctx: PolygonParser.AssigContext):
         polygon = self.visit(ctx.getChild(2))
-        self.polygons[ctx.getChild(0)] = polygon
-
-    def visitAssignedid(self, ctx: PolygonParser.AssignedidContext):
-        return self.polygons[ctx.getChild(0)]
+        self.polygons[ctx.getChild(0).getText()] = polygon
 
     def visitPrintsmth(self, ctx:PolygonParser.PrintsmthContext):
         print(self.visit(ctx.getChild(1)))
+
+    def visitBounding(self, ctx:PolygonParser.BoundingContext):
+        polygon = self.visit(ctx.getChild(1))
+        return ConvexPolygon(polygon.get_bounding_box())
 
     def visitArea(self, ctx: PolygonParser.AreaContext):
         polygon = self.visit(ctx.getChild(1))
@@ -71,7 +73,7 @@ class PolygonVisitorEval(PolygonVisitor):
 
     def visitInside(self, ctx: PolygonParser.InsideContext):
         a = self.visit(ctx.getChild(1))
-        b = self.visit(ctx.getChild(2))
+        b = self.visit(ctx.getChild(3))
         print("yes") if a.contains_convex_polygon(b) else print("no")
 
     def visitEqual(self, ctx: PolygonParser.EqualContext):
@@ -87,7 +89,7 @@ class PolygonVisitorEval(PolygonVisitor):
         ConvexPolygon.draw(filename, polygon_list)
 
     def visitColornum(self, ctx:PolygonParser.ColornumContext):
-        return float(ctx.getChild(0)), float(ctx.getChild(1)), float(ctx.getChild(2))
+        return float(ctx.getChild(0).getText()), float(ctx.getChild(1).getText()), float(ctx.getChild(2).getText())
 
     def visitColor(self, ctx: PolygonParser.ColorContext):
         polygon = self.visit(ctx.getChild(1))

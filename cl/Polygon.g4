@@ -4,19 +4,18 @@ root : (assig | printsmth | area | perimeter | vertices | centroid | inside | eq
 
 string: QUOTE STRING QUOTE;
 
-point: RNUM RNUM;
+point: NUM NUM;
 
 polygon : LPARENTHESIS polygon RPARENTHESIS     #priority
     | LBRACKET point* RBRACKET                  #newpolygon
     | polygon INTERSECT polygon                 #intersection
     | polygon UNION polygon                     #convexunion
-    | RANDOM NATNUM                             #random
-    | assignedid                                #polygonid
+    | RANDOM NUM                                #random
+    | BOUNDING polygon                          #bounding
+    | ID                                        #polygonid
     ;
 
 assig: ID ASSIG polygon;
-
-assignedid: ID;
 
 printsmth : PRINT polygon
     | PRINT string
@@ -40,9 +39,7 @@ colornum: NUM NUM NUM;
 
 color: COLOR polygon COMMA LCLAUDATOR colornum RCLAUDATOR;
 
-
-RNUM : ('-')? NUM ;
-NUM : NATNUM ('.' NATNUM)? ;
+NUM : ('-')? NATNUM ('.' NATNUM)? ;
 NATNUM : [0-9]+ ;
 
 LPARENTHESIS : '(';
@@ -70,7 +67,8 @@ INSIDE: 'inside';
 EQUAL: 'equal';
 DRAW: 'draw';
 
-STRING : [0-9A-Za-z._\-]+ ;
 ID : [a-zA-Z] [a-zA-Z0-9_]* ;
+STRING : [0-9A-Za-z._\-]+ ;
+
 COMMENT : '//' ~[\r\n]* -> skip ;
 WS : [ \r\n\t]+ -> skip ;
