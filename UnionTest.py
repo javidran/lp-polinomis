@@ -8,4 +8,4 @@ cp = ConvexPolygon(pointlist)
 cp2 = ConvexPolygon(pointlist_2)
 
 union = cp.union(cp2)
-union.draw_polygon()
+union.draw_polygon("union.png")

@@ -84,7 +84,7 @@ class PolygonVisitorEval(PolygonVisitor):
 
     def visitEqual(self, ctx: PolygonParser.EqualContext):
         a = self.visit(ctx.getChild(1))
-        b = self.visit(ctx.getChild(2))
+        b = self.visit(ctx.getChild(3))
         print("yes") if a == b else print("no")
 
     def visitDraw(self, ctx: PolygonParser.DrawContext):

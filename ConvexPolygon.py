@@ -106,7 +106,7 @@ def get_draw_coordinates(square_bounding_box, point_list):
         x_proportion_dist = get_proportion_dist(point[0], square_bounding_box[0][0], ref_dist)
         y_proportion_dist = get_proportion_dist(point[1], square_bounding_box[0][1], ref_dist)
 
-        img_max = 399
+        img_max = 398
         img_min = 1
         img_dist = img_max - img_min
 
@@ -203,40 +203,36 @@ class ConvexPolygon:
 
     def intersect(self, convex_polygon):
         def inside(p):
-            return (cp2[0] - cp1[0]) * (p[1] - cp1[1]) > (cp2[1] - cp1[1]) * (p[0] - cp1[0])
+            return orientation(last_clip_vertex, actual_clip_vertex, p) != 2
 
         def computeIntersection():
-            dc = [cp1[0] - cp2[0], cp1[1] - cp2[1]]
-            dp = [s[0] - e[0], s[1] - e[1]]
-            n1 = cp1[0] * cp2[1] - cp1[1] * cp2[0]
-            n2 = s[0] * e[1] - s[1] * e[0]
+            dc = [last_clip_vertex[0] - actual_clip_vertex[0], last_clip_vertex[1] - actual_clip_vertex[1]]
+            dp = [last_vertex[0] - actual_vertex[0], last_vertex[1] - actual_vertex[1]]
+            n1 = last_clip_vertex[0] * actual_clip_vertex[1] - last_clip_vertex[1] * actual_clip_vertex[0]
+            n2 = last_vertex[0] * actual_vertex[1] - last_vertex[1] * actual_vertex[0]
             n3 = 1.0 / (dc[0] * dp[1] - dc[1] * dp[0])
             return (n1 * dp[0] - n2 * dc[0]) * n3, (n1 * dp[1] - n2 * dc[1]) * n3
 
-        subjectPolygon = self.get_vertices()
-        clipPolygon = convex_polygon.get_vertices()
+        clip_polygon = convex_polygon.get_vertices()
+        output_list = self.get_vertices()
+        last_clip_vertex = clip_polygon[-1]
 
-        outputList = subjectPolygon
-        cp1 = clipPolygon[-1]
+        for actual_clip_vertex in clip_polygon:
+            input_list = output_list
+            output_list = []
+            last_vertex = input_list[-1]
 
-        for clipVertex in clipPolygon:
-            cp2 = clipVertex
-            inputList = outputList
-            outputList = []
-            s = inputList[-1]
+            for actual_vertex in input_list:
+                if inside(actual_vertex):
+                    if not inside(last_vertex):
+                        output_list.append(computeIntersection())
+                    output_list.append(actual_vertex)
+                elif inside(last_vertex):
+                    output_list.append(computeIntersection())
+                last_vertex = actual_vertex
+            last_clip_vertex = actual_clip_vertex
 
-            for subjectVertex in inputList:
-                e = subjectVertex
-                if inside(e):
-                    if not inside(s):
-                        outputList.append(computeIntersection())
-                    outputList.append(e)
-                elif inside(s):
-                    outputList.append(computeIntersection())
-                s = e
-            cp1 = cp2
-
-        return ConvexPolygon(outputList)
+        return ConvexPolygon(output_list)
 
     def contains_point(self, point):
         for i in range(self.number_of_vertices()):
@@ -359,5 +355,5 @@ class ConvexPolygon:
     def random(number_of_vertices):
         point_list = []
         for _ in range(number_of_vertices):
-            point_list.append((random(), random()))
+            point_list.append((round(random(), 3), round(random(), 3)))
         return ConvexPolygon(point_list)
