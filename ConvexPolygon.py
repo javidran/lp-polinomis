@@ -32,9 +32,9 @@ def convex_hull(points):
             else:
                 return 1
         elif o == 2:
-            return -1
-        else:
             return 1
+        else:
+            return -1
 
     # Find the bottom-most point
     ymin = points[0][1]
@@ -50,19 +50,17 @@ def convex_hull(points):
     points[0] = points[min_i]
     points[min_i] = tmp
 
-    # Order points in counterclockwise
+    # Order points in clockwise
     points = [points[0]] + sorted(points[1:], key=cmp_to_key(lambda p1, p2: compare(points[0], p1, p2)))
 
     # If two or more points are collinear, we will remove all the points in the middle
     # The compare function puts the farthest point at the end
     points_without_collinear = []
-    for i in range(1, len(points)):
-        if i < len(points) - 1 and orientation(points[0], points[i], points[i + 1]) == 0:
+    for i in range(len(points)):
+        if 1 < i < len(points) - 1 and orientation(points[0], points[i], points[i + 1]) == 0:
             continue
         points_without_collinear.append(points[i])
 
-    points_without_collinear.append(points[0])
-    points_without_collinear.reverse()
     points = points_without_collinear
 
     # If we have less than 3 vertices, we don't need to do more calculus.
@@ -76,7 +74,7 @@ def convex_hull(points):
 
     # Iterate every vertex to check if it can form part of the convex hull.
     for i in range(3, len(points)):
-        while len(stack) > 1 and orientation(stack[-2], stack[-1], points[i]) != 2:
+        while len(stack) >= 2 and orientation(stack[-2], stack[-1], points[i]) != 1:
             stack.pop()
         stack.append(points[i])
 
@@ -88,12 +86,12 @@ def get_square_bounding_box(bounding_box):
     ymin = bounding_box[0][1]
 
     # Calculate biggest distance in order to create a square box
-    dist_x = bounding_box[1][0] - xmin
-    dist_y = bounding_box[1][1] - ymin
+    dist_x = bounding_box[2][0] - xmin
+    dist_y = bounding_box[2][1] - ymin
     dist = (dist_x if dist_x > dist_y else dist_y)
 
     # Create global bounding box
-    return [(xmin, ymin), (xmin + dist, ymin + dist)]
+    return [(xmin, ymin), (xmin, ymin + dist), (xmin + dist, ymin + dist), (xmin + dist, ymin)]
 
 
 def get_draw_coordinates(square_bounding_box, point_list):
@@ -104,7 +102,7 @@ def get_draw_coordinates(square_bounding_box, point_list):
         def get_img_point(coord_prop, dist, start):
             return float(coord_prop * dist + start)
 
-        ref_dist = square_bounding_box[1][0] - square_bounding_box[0][0]
+        ref_dist = square_bounding_box[2][0] - square_bounding_box[0][0]
         x_proportion_dist = get_proportion_dist(point[0], square_bounding_box[0][0], ref_dist)
         y_proportion_dist = get_proportion_dist(point[1], square_bounding_box[0][1], ref_dist)
 
@@ -139,7 +137,7 @@ class ConvexPolygon:
         sequence = ""
         for point in self.points:
             for coord in point:
-                sequence += str(round(coord, 3)) + " "
+                sequence += format(coord, ".3f") + " "
         return sequence.rstrip()
 
     def __distance_list(self):
@@ -160,7 +158,10 @@ class ConvexPolygon:
         return self.color
 
     def set_color(self, color):
-        self.color = color
+        def to_int(num):
+            return int(num * 255)
+
+        self.color = tuple(map(to_int, color))
 
     def get_vertices(self):
         return self.points.copy()  # TODO Eliminar copy
@@ -292,7 +293,7 @@ class ConvexPolygon:
             if point[1] > ymax:
                 ymax = point[1]
 
-        return [(xmin, ymin), (xmax, ymax)]
+        return [(xmin, ymin), (xmin, ymax), (xmax, ymax), (xmax, ymin)]
 
     def draw_polygon(self, filename):
         b_box = get_square_bounding_box(self.get_bounding_box())
@@ -308,8 +309,8 @@ class ConvexPolygon:
         def create_global_box(reference_box):
             xmin = reference_box[0][0]
             ymin = reference_box[0][1]
-            xmax = reference_box[1][0]
-            ymax = reference_box[1][0]
+            xmax = reference_box[2][0]
+            ymax = reference_box[2][1]
 
             # Iterate over the other bounding boxes and get the biggest size
             for p in polygon_list[1:]:
@@ -320,12 +321,12 @@ class ConvexPolygon:
                     xmin = box[0][0]
                 if box[0][1] < ymin:
                     ymin = box[0][1]
-                if box[1][0] > xmax:
-                    xmax = box[1][0]
-                if box[1][0] > ymax:
-                    ymax = box[1][0]
+                if box[2][0] > xmax:
+                    xmax = box[2][0]
+                if box[2][1] > ymax:
+                    ymax = box[2][1]
 
-            bounding_box = [(xmin, ymin), (xmax, ymax)]
+            bounding_box = [(xmin, ymin), (xmin, ymax), (xmax, ymax), (xmax, ymin)]
             return get_square_bounding_box(bounding_box)
 
         global_box = None
@@ -355,6 +356,6 @@ class ConvexPolygon:
     @staticmethod
     def random(number_of_vertices):
         point_list = []
-        for _ in number_of_vertices:
+        for _ in range(number_of_vertices):
             point_list.append((random(), random()))
         return ConvexPolygon(point_list)

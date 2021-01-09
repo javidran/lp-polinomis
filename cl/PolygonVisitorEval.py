@@ -13,13 +13,13 @@ class PolygonVisitorEval(PolygonVisitor):
     polygons = {}
 
     def visitString(self, ctx: PolygonParser.StringContext):
-        return ctx.getChild(1)
+        return ctx.getChild(1).getText()
 
     def visitPoint(self, ctx: PolygonParser.PointContext):
         return float(ctx.getChild(0).getText()), float(ctx.getChild(1).getText())
 
     def visitRandom(self, ctx: PolygonParser.RandomContext):
-        return ConvexPolygon.random(int(ctx.getChild(1)))
+        return ConvexPolygon.random(int(ctx.getChild(1).getText()))
 
     def visitNewpolygon(self, ctx: PolygonParser.NewpolygonContext):
         point_list = []
@@ -57,11 +57,11 @@ class PolygonVisitorEval(PolygonVisitor):
 
     def visitArea(self, ctx: PolygonParser.AreaContext):
         polygon = self.visit(ctx.getChild(1))
-        print(polygon.get_area())
+        print(format(polygon.get_area(), ".3f"))
 
     def visitPerimeter(self, ctx: PolygonParser.PerimeterContext):
         polygon = self.visit(ctx.getChild(1))
-        print(polygon.get_perimeter())
+        print(format(polygon.get_perimeter(), ".3f"))
 
     def visitVertices(self, ctx: PolygonParser.VerticesContext):
         polygon = self.visit(ctx.getChild(1))
@@ -69,7 +69,8 @@ class PolygonVisitorEval(PolygonVisitor):
 
     def visitCentroid(self, ctx: PolygonParser.CentroidContext):
         polygon = self.visit(ctx.getChild(1))
-        print(polygon.get_centroid())
+        centroid = polygon.get_centroid()
+        print(format(centroid[0], ".3f") + " " + format(centroid[0], ".3f"))
 
     def visitInside(self, ctx: PolygonParser.InsideContext):
         a = self.visit(ctx.getChild(1))
