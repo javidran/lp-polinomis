@@ -11,12 +11,15 @@ polygon : LPARENTHESIS polygon RPARENTHESIS     #priority
     | polygon INTERSECT polygon                 #intersection
     | polygon UNION polygon                     #convexunion
     | RANDOM NATNUM                             #random
+    | assignedid                                #polygonid
     ;
 
 assig: ID ASSIG polygon;
 
-printsmth : PRINT polygon                       #printpolygon
-    | PRINT string                              #printstring
+assignedid: ID;
+
+printsmth : PRINT polygon
+    | PRINT string
     ;
 
 area: AREA polygon;

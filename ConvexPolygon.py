@@ -88,13 +88,22 @@ class ConvexPolygon:
     def __init__(self, points):
         self.points = convex_hull(list(dict.fromkeys(points)))
 
+    def __eq__(self, other):
+        if isinstance(other, ConvexPolygon):
+            return self.points == other.points
+        return False
+
     def __str__(self):
-        return str(self.points)
+        sequence = ""
+        for point in self.points:
+            for coord in point:
+                sequence += " " + str(round(coord, 3))
+        return sequence
 
     def __distance_list(self):
-        if self.number_of_edges == 0:
+        if self.number_of_vertices() <= 1:
             return []
-        if self.number_of_edges == 1:
+        if self.number_of_vertices() == 2:
             return [calc_distance(self.points[0], self.points[1])]
         else:
             edge_list = []
@@ -111,15 +120,6 @@ class ConvexPolygon:
     def number_of_vertices(self):
         return len(self.points)
 
-    def number_of_edges(self):
-        vertices = self.number_of_vertices()
-        if vertices == 1:
-            return 0
-        elif vertices == 2:
-            return 1
-        else:
-            return vertices
-
     def get_perimeter(self):
         perimeter_sum = 0
         for dist in self.__distance_list():
@@ -132,7 +132,7 @@ class ConvexPolygon:
             ang = math.degrees(math.atan2(c[1] - b[1], c[0] - b[0]) - math.atan2(a[1] - b[1], a[0] - b[0]))
             return ang + 360 if ang < 0 else ang
 
-        if self.number_of_edges() < 3:
+        if self.number_of_vertices() < 3:
             return False
 
         reference_angle = get_angle(self.points[0], self.points[1], self.points[2])

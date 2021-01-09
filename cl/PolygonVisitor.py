@@ -44,6 +44,11 @@ class PolygonVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by PolygonParser#polygonid.
+    def visitPolygonid(self, ctx:PolygonParser.PolygonidContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by PolygonParser#priority.
     def visitPriority(self, ctx:PolygonParser.PriorityContext):
         return self.visitChildren(ctx)
@@ -54,13 +59,13 @@ class PolygonVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by PolygonParser#printpolygon.
-    def visitPrintpolygon(self, ctx:PolygonParser.PrintpolygonContext):
+    # Visit a parse tree produced by PolygonParser#assignedid.
+    def visitAssignedid(self, ctx:PolygonParser.AssignedidContext):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by PolygonParser#printstring.
-    def visitPrintstring(self, ctx:PolygonParser.PrintstringContext):
+    # Visit a parse tree produced by PolygonParser#printsmth.
+    def visitPrintsmth(self, ctx:PolygonParser.PrintsmthContext):
         return self.visitChildren(ctx)
 
 
