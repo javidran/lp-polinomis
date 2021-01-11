@@ -55,7 +55,7 @@ def convex_hull(points):
     Calcula los puntos que forman un poligono convexo que envuelven a todos los puntos pasados por parametro.
 
     Algoritmo: Graham Scan
-    
+
     :param points: Lista de puntos.
     :return: La lista de puntos que envuelve a todos los demás en forma de poligono convexo.
     """
