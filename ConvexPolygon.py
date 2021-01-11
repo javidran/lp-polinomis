@@ -2,11 +2,18 @@ import math
 from PIL import Image, ImageDraw
 from functools import cmp_to_key
 from random import random
+from io import BytesIO
 
 
 def calc_distance(point_a, point_b):
     return math.sqrt(((point_a[0] - point_b[0]) ** 2) + ((point_a[1] - point_b[1]) ** 2))
 
+def is_inside_2_points(point_a, point_b, point):
+    if orientation(point_a, point_b, point) == 0:
+        ab_dist = calc_distance(point_a, point_b)
+        if ab_dist >= calc_distance(point_a, point) and ab_dist >= calc_distance(point_b, point):
+            return True
+    return False
 
 # To find orientation of ordered triplet (p, q, r).
 # The function returns following values depending of their relation
@@ -35,6 +42,9 @@ def convex_hull(points):
             return 1
         else:
             return -1
+
+    if len(points) == 0:
+        return points
 
     # Find the bottom-most point
     ymin = points[0][1]
@@ -122,11 +132,10 @@ def get_draw_coordinates(square_bounding_box, point_list):
 
 
 class ConvexPolygon:
-    points = None
-    color = (59, 163, 188)
 
     def __init__(self, points):
         self.points = convex_hull(list(dict.fromkeys(points)))
+        self.color = (59, 163, 188)
 
     def __eq__(self, other):
         if isinstance(other, ConvexPolygon):
@@ -203,7 +212,10 @@ class ConvexPolygon:
 
     def intersect(self, convex_polygon):
         def inside(p):
-            return orientation(last_clip_vertex, actual_clip_vertex, p) != 2
+            orient = orientation(last_clip_vertex, actual_clip_vertex, p)
+            if orient == 0 and not is_inside_2_points(last_clip_vertex, actual_clip_vertex, p):
+                return False
+            return orient != 2
 
         def computeIntersection():
             dc = [last_clip_vertex[0] - actual_clip_vertex[0], last_clip_vertex[1] - actual_clip_vertex[1]]
@@ -216,6 +228,11 @@ class ConvexPolygon:
         clip_polygon = convex_polygon.get_vertices()
         output_list = self.get_vertices()
         last_clip_vertex = clip_polygon[-1]
+
+        if self.number_of_vertices() == 0:
+            return convex_polygon
+        if convex_polygon.number_of_vertices() == 0:
+            return self
 
         for actual_clip_vertex in clip_polygon:
             input_list = output_list
@@ -235,9 +252,16 @@ class ConvexPolygon:
         return ConvexPolygon(output_list)
 
     def contains_point(self, point):
+        if self.number_of_vertices() == 1:
+            return self.points[0] == point
+
         for i in range(self.number_of_vertices()):
-            if 0 < i < self.number_of_vertices() - 1 and orientation(self.points[i], self.points[i + 1], point) == 2:
-                return False
+            if 0 < i < self.number_of_vertices() - 1:
+                orient = orientation(self.points[i], self.points[i + 1], point)
+                if orient == 2:
+                    return False
+                elif orient == 0 and not is_inside_2_points(self.points[i], self.points[i + 1], point):
+                    return False
         return True
 
     def get_centroid(self):
@@ -263,6 +287,9 @@ class ConvexPolygon:
         return round(centroid_x, 3), round(centroid_y, 3)
 
     def get_area(self):
+        if self.number_of_vertices() < 3:
+            return 0
+
         area = 0
         j = self.number_of_vertices() - 1
 
@@ -298,12 +325,15 @@ class ConvexPolygon:
 
         img = Image.new("RGB", [400, 400], "white")
         img_draw = ImageDraw.Draw(img, "RGBA")
-        img_draw.polygon(get_draw_coordinates(b_box, self.points), fill=self.color + (50,), outline=self.color + (255,))
+        drawing_points = get_draw_coordinates(b_box, self.points)
+        for point in drawing_points:
+            img_draw.point(point, fill=self.color + (255,))
+        img_draw.polygon(drawing_points, fill=self.color + (50,), outline=self.color + (255,))
         img = img.transpose(Image.FLIP_TOP_BOTTOM)
         img.save(filename)
 
     @staticmethod
-    def draw(filename, polygon_list):
+    def draw(filename, polygon_list, image_handler=None):
         def create_global_box(reference_box):
             xmin = reference_box[0][0]
             ymin = reference_box[0][1]
@@ -345,11 +375,22 @@ class ConvexPolygon:
 
         for polygon in polygon_list:
             color = polygon.get_color()
-            points = polygon.get_vertices()
-            img_draw.polygon(get_draw_coordinates(global_box, points), fill=color + (50,), outline=color + (255,))
+            drawing_points = get_draw_coordinates(global_box, polygon.get_vertices())
+            for point in drawing_points:
+                img_draw.point(point, fill=color + (255,))
+            if len(drawing_points) > 2:
+                img_draw.polygon(drawing_points, fill=color + (50,), outline=color + (255,))
 
         img = img.transpose(Image.FLIP_TOP_BOTTOM)
-        img.save(filename)
+
+        if image_handler is not None:
+            bio = BytesIO()
+            bio.name = filename
+            img.save(bio, 'PNG')
+            bio.seek(0)
+            image_handler(filename, bio)
+        else:
+            img.save(filename)
 
     @staticmethod
     def random(number_of_vertices):

@@ -10,4 +10,4 @@ parser = PolygonParser(token_stream)
 tree = parser.root()
 
 visitor = PolygonVisitorEval()
-visitor.visit(tree)
+print(visitor.visit(tree))
