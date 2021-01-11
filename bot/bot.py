@@ -1,8 +1,17 @@
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 from antlr4 import *
-from cl.PolygonLexer import PolygonLexer
-from cl.PolygonParser import PolygonParser
-from cl.PolygonVisitorEval import PolygonVisitorEval
+
+try:
+    from ..cl.PolygonLexer import PolygonLexer
+    from ..cl.PolygonParser import PolygonParser
+    from ..cl.PolygonVisitorEval import PolygonVisitorEval
+except (ValueError, ImportError) as _:
+    import sys
+    sys.path.append("..")
+    from cl.PolygonLexer import PolygonLexer
+    from cl.PolygonParser import PolygonParser
+    from cl.PolygonVisitorEval import PolygonVisitorEval
+
 
 # Diccionario para trabajar con instancias de PolygonVisitorEval únicas por usuario.
 context_visitors = {}

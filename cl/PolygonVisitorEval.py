@@ -1,5 +1,3 @@
-from polygons import ConvexPolygon
-
 if __name__ is not None and "." in __name__:
     from .PolygonParser import PolygonParser
     from .PolygonVisitor import PolygonVisitor
@@ -7,9 +5,15 @@ else:
     from PolygonParser import PolygonParser
     from PolygonVisitor import PolygonVisitor
 
+try:
+    from ..polygons import ConvexPolygon
+except (ValueError, ImportError) as _:
+    import sys
+    sys.path.append("..")
+    from polygons import *
+
 
 # This class defines a complete generic visitor for a parse tree produced by PolygonParser.
-
 class PolygonVisitorEval(PolygonVisitor):
 
     def __init__(self, image_handler=None):

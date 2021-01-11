@@ -66,12 +66,14 @@ Para comprobar su correcto funcionamiento, se recomienda el uso del bot explicad
 Igualmente se ofrecen 2 scripts para poder utilizar el lenguaje:
 - Script que procesa todo el input definido en el archivo script.txt. Por defecto contiene el ejemplo definido en el enunciado:
 ```
-python3 cl/test_grammar.py
+// En la carpeta cl/
+python3 test_grammar.py
 ```
 
 - Script que procesa una sola linea provista a través del terminal durante su ejecución:
 ```
-python3 cl/test_single_grammar.py
+// En la carpeta cl/
+python3 test_single_grammar.py
 ```
 
 ### Bot de Telegram
@@ -82,7 +84,8 @@ El bot de Telegram utiliza el lenguaje de programación creado. En caso de quere
 
 Antes de poder hablar con el bot, será necesario inicializarlo. Para ello solamente será necesario ejecutar el script "bot.py":
 ```
-python3 bot/bot.py
+// En la carpeta bot
+python3 bot.py
 ```
 
 #### Enlace y uso del bot
@@ -91,6 +94,8 @@ Se puede hablar con el bot a través de: [@JavierCPolinomisBot](t.me/JavierCPoli
 
 El primer paso es ejecutar el comando "/start".
 <br>Una vez inicializado, el bot procesará todos los mensajes a través del lenguaje de programación creado. Se pueden enviar varias sentencias en un mismo mensaje. En caso de mandar varios mensajes, la instancia de los poligonos persistirá para el usuario.
+
+Nota: En caso de querer utilizar un bot propio, sustituir el contenido de token.txt por el token del nuevo bot a utilizar.
 
 ## Autor
 
