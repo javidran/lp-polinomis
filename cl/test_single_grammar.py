@@ -13,3 +13,4 @@ tree = parser.root()
 
 visitor = PolygonVisitorEval()
 print(visitor.visit(tree))
+
