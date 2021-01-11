@@ -5,22 +5,42 @@ from random import random
 from io import BytesIO
 
 
-def calc_distance(point_a, point_b):
+def calc_distance(point_a, point_b) -> float:
+    """
+    Calcula la distancia entre 2 puntos.
+
+    :param point_a: Punto A.
+    :param point_b: Punto B.
+    :return: Distancia entre punto A y B.
+    """
     return math.sqrt(((point_a[0] - point_b[0]) ** 2) + ((point_a[1] - point_b[1]) ** 2))
 
-def is_inside_2_points(point_a, point_b, point):
+
+def is_inside_2_points(point_a, point_b, point) -> bool:
+    """
+    Indica si un punto se encuenta dentro de la arista entre A y B.
+
+    :param point_a: Punto A.
+    :param point_b: Punto B.
+    :param point: Punto a comprobar.
+    :return: Booleano indicando si el punto está dentro o no.
+    """
     if orientation(point_a, point_b, point) == 0:
         ab_dist = calc_distance(point_a, point_b)
         if ab_dist >= calc_distance(point_a, point) and ab_dist >= calc_distance(point_b, point):
             return True
     return False
 
-# To find orientation of ordered triplet (p, q, r).
-# The function returns following values depending of their relation
-# 0 --> Collinear
-# 1 --> Clockwise
-# 2 --> Counterclockwise
-def orientation(pa, pb, pc):
+
+def orientation(pa, pb, pc) -> int:
+    """
+    Calcula el angulo de giro de un punto pc respecto la arista pa-pb.
+
+    :param pa: Primer punto de la arista que conecta con pb
+    :param pb: Segundo punto de la arista que contecta ambos puntos
+    :param pc: Punto de la arista a comprobar.
+    :return: Devuelve la orientación del angulo. 0 --> Colinear | 1 --> Horario | 2 --> Antihorario
+    """
     value = (pb[1] - pa[1]) * (pc[0] - pb[0]) - (pb[0] - pa[0]) * (pc[1] - pb[1])
     if value == 0:
         return 0  # Collinear
@@ -31,7 +51,17 @@ def orientation(pa, pb, pc):
 
 
 def convex_hull(points):
+    """
+    Calcula los puntos que forman un poligono convexo que envuelven a todos los puntos pasados por parametro.
+
+    Algoritmo: Graham Scan
+    
+    :param points: Lista de puntos.
+    :return: La lista de puntos que envuelve a todos los demás en forma de poligono convexo.
+    """
+
     def compare(point0, point1, point2):
+        # Funcion que permite ordenar los puntos en sentido horario
         o = orientation(point0, point1, point2)
         if o == 0:
             if calc_distance(point0, point2) >= calc_distance(point0, point1):
@@ -46,7 +76,7 @@ def convex_hull(points):
     if len(points) == 0:
         return points
 
-    # Find the bottom-most point
+    # Encuentra el punto más inferior de todos
     ymin = points[0][1]
     min_i = 0
     for i, point in enumerate(points):
@@ -55,16 +85,16 @@ def convex_hull(points):
             ymin = y
             min_i = i
 
-    # Place the bottom-most point at first position
+    # Coloca el punto más inferior en la posición inicial
     tmp = points[0]
     points[0] = points[min_i]
     points[min_i] = tmp
 
-    # Order points in clockwise
+    # Ordena los puntos en sentido horario
     points = [points[0]] + sorted(points[1:], key=cmp_to_key(lambda p1, p2: compare(points[0], p1, p2)))
 
-    # If two or more points are collinear, we will remove all the points in the middle
-    # The compare function puts the farthest point at the end
+    # Si 2 o más puntos son colineares, eliminaremos todos los puntos entre medio
+    # Nota: La función de comparación se encarga de colocar los puntos colineares en orden de distancia
     points_without_collinear = []
     for i in range(len(points)):
         if 1 < i < len(points) - 1 and orientation(points[0], points[i], points[i + 1]) == 0:
@@ -73,16 +103,16 @@ def convex_hull(points):
 
     points = points_without_collinear
 
-    # If we have less than 3 vertices, we don't need to do more calculus.
+    # Si tenemos menos de 3 vertices, no es necesario calcular más.
     if len(points) < 3:
         return points
 
-    # Create an empty stack with the 3 first points
+    # Se crea una pila inicial con 3 elementos
     stack = []
     for p in points[:3]:
         stack.append(p)
 
-    # Iterate every vertex to check if it can form part of the convex hull.
+    # Se itera cada elemento para ver si puede formar parte del poligono
     for i in range(3, len(points)):
         while len(stack) >= 2 and orientation(stack[-2], stack[-1], points[i]) != 1:
             stack.pop()
@@ -92,6 +122,13 @@ def convex_hull(points):
 
 
 def get_square_bounding_box(bounding_box):
+    """
+    Modifica la Bounding Box proporcionada para que tenga relación de aspecto 1:1 (cuadrada) dependiendo de si el ancho o el alto es mayor.
+    La Bounding Box se puede obtener con el método get_bounding_box() de ConvexPolygon.
+
+    :param bounding_box: Bounding Box de referencia
+    :return: Bounding Box convertida a relación de aspecto  1:1
+    """
     xmin = bounding_box[0][0]
     ymin = bounding_box[0][1]
 
@@ -105,6 +142,14 @@ def get_square_bounding_box(bounding_box):
 
 
 def get_draw_coordinates(square_bounding_box, point_list):
+    """
+    Transforma la lista de puntos envueltos en la Bounding Box proporcionada para que entren de manera proporcional
+    en una Bounding Box de 400x400, correspondiente a las imagenes resultantes de dibujar un ConvexPolygon.
+
+    :param square_bounding_box: Bounding Box con forma cuadrada.
+    :param point_list: Lista de puntos a convertir.
+    :return: Lista de puntos convertidos a las nuevas corrdenadas.
+    """
     def get_point_draw_coordinates(point):
         def get_proportion_dist(coord, initial_coord, dist):
             return float((coord - initial_coord) / dist)
@@ -134,7 +179,14 @@ def get_draw_coordinates(square_bounding_box, point_list):
 class ConvexPolygon:
 
     def __init__(self, points):
+        """
+        Función de inicialización del Poligono.
+        Se forma en base al poligono convexo que envuelve a los puntos proporcionados.
+
+        :param points: Lista de puntos
+        """
         self.points = convex_hull(list(dict.fromkeys(points)))
+        # Se define también un color por defecto (Cyan)
         self.color = (59, 163, 188)
 
     def __eq__(self, other):
@@ -163,29 +215,61 @@ class ConvexPolygon:
                     edge_list.append(calc_distance(self.points[i], self.points[i + 1]))
             return edge_list
 
-    def get_color(self):
+    def get_color(self) -> (int, int, int):
+        """
+        Devuelve el color definido para dibujar el polígono.
+
+        Por defecto es Cyan.
+        :return: Devuelve el color del polígono en forma de Tuple representando RGB.
+        """
         return self.color
 
-    def set_color(self, color):
+    def set_color(self, color: (float, float, float)):
+        """
+        Define el color para dibujar el polígono.
+
+        Por defecto es Cyan.
+
+        :param color: Color RGB con cada elemento del tuple indicando un color en rango [0,1]
+        """
         def to_int(num):
             return int(num * 255)
 
         self.color = tuple(map(to_int, color))
 
     def get_vertices(self):
+        """
+        Devuelve la lista de vertices que conforman el polígono.
+
+        :return: Lista de puntos.
+        """
         return self.points.copy()
 
-    def number_of_vertices(self):
+    def number_of_vertices(self) -> int:
+        """
+        Devuelve la cantidad de vertices que conforman el polígono.
+
+        :return: Número de vertices.
+        """
         return len(self.points)
 
-    def get_perimeter(self):
+    def get_perimeter(self) -> float:
+        """
+        Calcula el perimetro del polígono.
+
+        :return: Perimetro
+        """
         perimeter_sum = 0
         for dist in self.__distance_list():
             perimeter_sum += dist
         return round(perimeter_sum, 3)
 
-    def is_regular(self):
+    def is_regular(self) -> bool:
+        """
+        Calcula si un polígono es regular.
 
+        :return: Booleano indicando si es regular o no.
+        """
         def get_angle(a, b, c):
             ang = math.degrees(math.atan2(c[1] - b[1], c[0] - b[0]) - math.atan2(a[1] - b[1], a[0] - b[0]))
             return ang + 360 if ang < 0 else ang
@@ -202,15 +286,34 @@ class ConvexPolygon:
         return True
 
     def union(self, convex_polygon):
+        """
+        Calcula la union convexa de dos poligonos.
+
+        :param convex_polygon: ConvexPolygon a unir.
+        :return: ConvexPolygon resultante
+        """
         unified_points = self.get_vertices() + convex_polygon.get_vertices()
         return ConvexPolygon(unified_points)
 
-    def contains_convex_polygon(self, convex_polygon):
+    def contains_convex_polygon(self, convex_polygon) -> bool:
+        """
+        Calcula si el polígono proporcionado puede ser englobado por este o no.
+
+        :param convex_polygon: ConvexPolygon a comprobar.
+        :return: Booleano indicando si el poligono está incluido o no.
+        """
         unified_points = self.get_vertices() + convex_polygon.get_vertices()
         union = ConvexPolygon(unified_points)
         return union.get_vertices() == self.get_vertices()
 
     def intersect(self, convex_polygon):
+        """
+        Calcula la intersección entre dos polígonos.
+        Algoritmo: Sutherland-Hodgman.
+
+        :param convex_polygon: ConvexPolygon a intersectar.
+        :return: ConvexPolygon resultante.
+        """
         def inside(p):
             orient = orientation(last_clip_vertex, actual_clip_vertex, p)
             if orient == 0 and not is_inside_2_points(last_clip_vertex, actual_clip_vertex, p):
@@ -251,7 +354,13 @@ class ConvexPolygon:
 
         return ConvexPolygon(output_list)
 
-    def contains_point(self, point):
+    def contains_point(self, point) -> bool:
+        """
+        Calcula si el punto proporcionado está contenido por el polígono.
+
+        :param point: Punto a comprobar
+        :return: Booleano indicando si el punto está contenido o no.
+        """
         if self.number_of_vertices() == 1:
             return self.points[0] == point
 
@@ -264,7 +373,15 @@ class ConvexPolygon:
                     return False
         return True
 
-    def get_centroid(self):
+    def get_centroid(self) -> (float, float):
+        """
+        Calcula el punto centroide del polígono.
+
+        :return: Punto centroide. Si el polígono tiene menos de 3 vertices devuelve None.
+        """
+        if self.number_of_vertices() < 3:
+            return None
+
         centroid_x = 0
         centroid_y = 0
         det = 0
@@ -287,6 +404,11 @@ class ConvexPolygon:
         return round(centroid_x, 3), round(centroid_y, 3)
 
     def get_area(self):
+        """
+        Calcula el area del polígono.
+
+        :return: Area del polígono. Si el polígono tiene menos de 3 vertices devuelve None.
+        """
         if self.number_of_vertices() < 3:
             return 0
 
@@ -300,6 +422,11 @@ class ConvexPolygon:
         return round(abs(area / 2.0), 3)
 
     def get_bounding_box(self):
+        """
+        Calcula el polígono rectangular que envuelve al polígono.
+
+        :return: Lista de 4 puntos.
+        """
         if self.number_of_vertices() == 0:
             return None
 
@@ -320,7 +447,12 @@ class ConvexPolygon:
 
         return [(xmin, ymin), (xmin, ymax), (xmax, ymax), (xmax, ymin)]
 
-    def draw_polygon(self, filename):
+    def draw_polygon(self, filename: str):
+        """
+        Guarda una imagen del polígono en el archivo con el nombre proporcionado por parámetro.
+
+        :param filename: Nombre de la imagen (Debe incluir la extensión .png)
+        """
         b_box = get_square_bounding_box(self.get_bounding_box())
 
         img = Image.new("RGB", [400, 400], "white")
@@ -333,14 +465,21 @@ class ConvexPolygon:
         img.save(filename)
 
     @staticmethod
-    def draw(filename, polygon_list, image_handler=None):
+    def draw(filename: str, polygon_list, image_handler=None):
+        """
+        Guarda una imagen con la lista de polígonos proporcionada en el archivo con el nombre proporcionado por parámetro.
+
+        :param filename: Nombre de la imagen (Debe incluir la extensión .png)
+        :param polygon_list: Lista de polígonos a dibujar
+        :param image_handler: Método para gestionar la imagen en caso de que no se quiera guardar en disco.
+        """
         def create_global_box(reference_box):
             xmin = reference_box[0][0]
             ymin = reference_box[0][1]
             xmax = reference_box[2][0]
             ymax = reference_box[2][1]
 
-            # Iterate over the other bounding boxes and get the biggest size
+            # Itera todas las bounding box para crear una que las englobe a todas.
             for p in polygon_list[1:]:
                 box = p.get_bounding_box()
                 if box is None:
@@ -359,14 +498,14 @@ class ConvexPolygon:
 
         global_box = None
 
-        # Search for first bounding box
+        # Buscar la primera Bounding Box disponible
         for i, polygon in enumerate(polygon_list):
             first_box = polygon.get_bounding_box()
             if first_box is not None:
                 global_box = create_global_box(first_box)
                 break
 
-        # If no box is defined, raise an exception
+        # Si no se puede definir ninguna Bounding Box, se lanza error.
         if global_box is None:
             raise Exception("There are not vertices to print.")
 
@@ -394,6 +533,14 @@ class ConvexPolygon:
 
     @staticmethod
     def random(number_of_vertices):
+        """
+        Genera una lista de vertices aleatorios y calcula el ConvexPolygon resultante a partir de esa lista.
+
+        Los vertices estan compresos entre [0,1]^2.
+
+        :param number_of_vertices: Numero de vertices a generar.
+        :return: ConvexPolygon resultante.
+        """
         point_list = []
         for _ in range(number_of_vertices):
             point_list.append((round(random(), 3), round(random(), 3)))
