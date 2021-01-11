@@ -1,91 +1,97 @@
 # LP - Projecte Polinomis
 
-```
-antlr4 -Dlanguage=Python3 -no-listener -visitor Polygon.g4
-```
+Practica de LP Polinomis realizada por Javier Cabrera.
+Incluye la clase ConvexPolygon.py, un lenguaje de programación y un bot de Telegram.
 
-One Paragraph of project description goes here
+## Pre-requisitos
 
-## Getting Started
-
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
-
-### Prerequisites
-
-What things you need to install the software and how to install them
+Para poder ejecutar los scripts es necesario tener instaladas las librerías definidas en el archivo "requirements.txt".
+En él se encuentran las librerías con las correspondientes versiones utilizadas.
 
 ```
-Give examples
+Pillow~=8.1.0
+antlr4-python3-runtime~=4.9.1
+python-telegram-bot~=13.1
 ```
 
-### Installing
+## Como funciona
 
-A step by step series of examples that tell you how to get a development env running
+### ConvexPolygon
 
-Say what the step will be
+#### Estructura básica
 
-```
-Give the example
-```
+Utilizar la clase ConvexPolygon es muy sencillo. 
+Tan solo debe tenerse en cuenta como se conforma la lista de puntos de que el poligono recibe y como se estructuran.
 
-And repeat
 
-```
-until finished
-```
+Un **punto** es un tuple formado por floats -> (float, float)<br>
+Ejemplo: (1, 0.2)
 
-End with an example of getting some data out of the system or using it for a little demo
 
-## Running the tests
+Una **lista de puntos** es lo que su nombre dice, una lista de puntos -> [(float. float), (float. float), ...]<br>
+Ejemplo: [(0, 0), (0, 1), (1, 0)]
 
-Explain how to run the automated tests for this system
+#### Inicialización
 
-### Break down into end to end tests
+En el momento de definir un ConvexPolygon, será necesario proporcionarle una lista de puntos a procesar. 
 
-Explain what these tests test and why
 
 ```
-Give an example
+lista = [(0, 0), (0, 1), (1, 0)]
+poligono = ConvexPolygon(lista)
 ```
 
-### And coding style tests
+#### Métodos
 
-Explain what these tests test and why
+Todos los métodos ofrecidos por la clase ConvexPolygon se encuentran documentados en la misma. Pueden consultar el código fuente para consultarlos y leer en la documentación que hacen.
 
+Es importante recalcar que todos los métodos que devuelven puntos o lista de puntos se estructuraran bajo el mismo formato explicado anteriormente.
+
+#### Script de ejemplo
+
+Se encuentra a su disposición un script sencillo que crea dos poligonos y realiza la unión de los mismos en el archivo "test.py". Ejecutable mediante el comando:
 ```
-Give an example
+python3 test.py
 ```
 
-## Deployment
+### Lenguaje de programación
 
-Add additional notes about how to deploy this on a live system
+#### Definición 
+El lenguaje de programación no es necesario explicarlo, ya que cumple todos los requerimientos definidos en el enunciado de la practica de LP-Polinomis.
 
-## Built With
+#### Scripts de ejemplo
 
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
+Para comprobar su correcto funcionamiento, se recomienda el uso del bot explicado más adelante.
 
-## Contributing
+Igualmente se ofrecen 2 scripts para poder utilizar el lenguaje:
+- Script que procesa todo el input definido en el archivo script.txt. Por defecto contiene el ejemplo definido en el enunciado:
+```
+python3 cl/test_grammar.py
+```
 
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
+- Script que procesa una sola linea provista a través del terminal durante su ejecución:
+```
+python3 cl/test_single_grammar.py
+```
 
-## Versioning
+### Bot de Telegram
 
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
+El bot de Telegram utiliza el lenguaje de programación creado. En caso de querer realizar pruebas, su uso es recomendado, ya que la instancia de los datos definidos se conserva en cada conversión de cada usuario.
 
-## Authors
+#### Inicialización
 
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
+Antes de poder hablar con el bot, será necesario inicializarlo. Para ello solamente será necesario ejecutar el script "bot.py":
+```
+python3 bot.py
+```
 
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
+#### Enlace y uso del bot
 
-## License
+Se puede hablar con el bot a través de: [@JavierCPolinomisBot](t.me/JavierCPolinomisBot)
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+El primer paso es ejecutar el comando "/start".
+<br>Una vez inicializado, el bot procesará todos los mensajes a través del lenguaje de programación creado. Se pueden enviar varias sentencias en un mismo mensaje. En caso de mandar varios mensajes, la instancia de los poligonos persistirá para el usuario.
 
-## Acknowledgments
+## Autor
 
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
+* **Javier Cabrera Rodríguez**
