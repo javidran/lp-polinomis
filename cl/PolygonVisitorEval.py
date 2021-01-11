@@ -50,8 +50,8 @@ class PolygonVisitorEval(PolygonVisitor):
         return a.intersect(b)
 
     def visitPolygonid(self, ctx: PolygonParser.PolygonidContext):
-        id = ctx.getChild(0).getText()
-        return self.polygons[id]
+        pol_id = ctx.getChild(0).getText()
+        return self.polygons[pol_id]
 
     def visitPriority(self, ctx: PolygonParser.PriorityContext):
         return self.visit(ctx.getChild(1))
@@ -99,7 +99,7 @@ class PolygonVisitorEval(PolygonVisitor):
     def visitEqual(self, ctx: PolygonParser.EqualContext):
         a = self.visit(ctx.getChild(1))
         b = self.visit(ctx.getChild(3))
-        answer = ("yes" if a == b else"no")
+        answer = ("yes" if a == b else "no")
         return answer + "\n"
 
     def visitDraw(self, ctx: PolygonParser.DrawContext):

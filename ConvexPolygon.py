@@ -332,10 +332,15 @@ class ConvexPolygon:
         output_list = self.get_vertices()
         last_clip_vertex = clip_polygon[-1]
 
-        if self.number_of_vertices() == 0:
-            return convex_polygon
-        if convex_polygon.number_of_vertices() == 0:
-            return self
+        # Si uno de los polígonos no tiene vertices, la intersección no tendrá tampoco vertices.
+        if self.number_of_vertices() == 0 or convex_polygon.number_of_vertices() == 0:
+            return ConvexPolygon([])
+
+        # Si el clip_polygon solo tiene 1 vértice, el algoritmo no comprobará bien los puntos
+        # asi que tan solo comprobaremos si el otro polígono incluye ese vértice.
+        # En el caso de que el actual polígono solo tenga un vértice, el algoritmo ya funcionará correctamente.
+        if convex_polygon.number_of_vertices() == 1:
+            return self if self.contains_point(clip_polygon[0]) else ConvexPolygon([])
 
         for actual_clip_vertex in clip_polygon:
             input_list = output_list
