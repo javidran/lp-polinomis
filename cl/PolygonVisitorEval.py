@@ -21,7 +21,7 @@ class PolygonVisitorEval(PolygonVisitor):
         for i in range(ctx.getChildCount()):
             result = self.visit(ctx.getChild(i))
             if isinstance(result, str):
-                output += result
+                output += result + "\n"
         return output
 
     def visitString(self, ctx: PolygonParser.StringContext):
@@ -61,7 +61,7 @@ class PolygonVisitorEval(PolygonVisitor):
         self.polygons[ctx.getChild(0).getText()] = polygon
 
     def visitPrintsmth(self, ctx: PolygonParser.PrintsmthContext):
-        return str(self.visit(ctx.getChild(1))) + "\n"
+        return str(self.visit(ctx.getChild(1)))
 
     def visitBounding(self, ctx: PolygonParser.BoundingContext):
         polygon = self.visit(ctx.getChild(1))
@@ -69,38 +69,35 @@ class PolygonVisitorEval(PolygonVisitor):
 
     def visitArea(self, ctx: PolygonParser.AreaContext):
         polygon = self.visit(ctx.getChild(1))
-        return str(format(polygon.get_area(), ".3f")) + "\n"
+        return str(format(polygon.get_area(), ".3f"))
 
     def visitPerimeter(self, ctx: PolygonParser.PerimeterContext):
         polygon = self.visit(ctx.getChild(1))
-        return str(format(polygon.get_perimeter(), ".3f")) + "\n"
+        return str(format(polygon.get_perimeter(), ".3f"))
 
     def visitVertices(self, ctx: PolygonParser.VerticesContext):
         polygon = self.visit(ctx.getChild(1))
-        return str(polygon.number_of_vertices()) + "\n"
+        return str(polygon.number_of_vertices())
 
     def visitCentroid(self, ctx: PolygonParser.CentroidContext):
         polygon = self.visit(ctx.getChild(1))
         centroid = polygon.get_centroid()
-        return str(format(centroid[0], ".3f") + " " + format(centroid[0], ".3f")) + "\n"
+        return str(format(centroid[0], ".3f") + " " + format(centroid[0], ".3f"))
 
     def visitInsidepoint(self, ctx: PolygonParser.InsideContext):
         a = self.visit(ctx.getChild(2))
         b = self.visit(ctx.getChild(5))
-        answer = ("yes" if b.contains_point(a) else "no")
-        return answer + "\n"
+        return "yes" if b.contains_point(a) else "no"
 
     def visitInsidepolygon(self, ctx: PolygonParser.InsideContext):
         a = self.visit(ctx.getChild(1))
         b = self.visit(ctx.getChild(3))
-        answer = ("yes" if a.contains_convex_polygon(b) else "no")
-        return answer + "\n"
+        return "yes" if a.contains_convex_polygon(b) else "no"
 
     def visitEqual(self, ctx: PolygonParser.EqualContext):
         a = self.visit(ctx.getChild(1))
         b = self.visit(ctx.getChild(3))
-        answer = ("yes" if a == b else "no")
-        return answer + "\n"
+        return "yes" if a == b else "no"
 
     def visitDraw(self, ctx: PolygonParser.DrawContext):
         filename = self.visit(ctx.getChild(1))
