@@ -3,9 +3,12 @@ from PIL import Image, ImageDraw
 from functools import cmp_to_key
 from random import random
 from io import BytesIO
+from typing import List, Optional
+
+Point = (float, float)  # Tipo escrito para simplificar los requerimientos de tipos en los métodos
 
 
-def calc_distance(point_a, point_b) -> float:
+def calc_distance(point_a: Point, point_b: Point) -> float:
     """
     Calcula la distancia entre 2 puntos.
 
@@ -16,7 +19,7 @@ def calc_distance(point_a, point_b) -> float:
     return math.sqrt(((point_a[0] - point_b[0]) ** 2) + ((point_a[1] - point_b[1]) ** 2))
 
 
-def is_inside_2_points(point_a, point_b, point) -> bool:
+def is_inside_2_points(point_a: Point, point_b: Point, point: Point) -> bool:
     """
     Indica si un punto se encuenta dentro de la arista entre A y B.
 
@@ -32,7 +35,7 @@ def is_inside_2_points(point_a, point_b, point) -> bool:
     return False
 
 
-def orientation(pa, pb, pc) -> int:
+def orientation(pa: Point, pb: Point, pc: Point) -> int:
     """
     Calcula el angulo de giro de un punto pc respecto la arista pa-pb.
 
@@ -50,7 +53,7 @@ def orientation(pa, pb, pc) -> int:
         return 2  # Counterclockwise
 
 
-def convex_hull(points):
+def convex_hull(points: List[Point]) -> List[Point]:
     """
     Calcula los puntos que forman un poligono convexo que envuelven a todos los puntos pasados por parametro.
 
@@ -121,7 +124,7 @@ def convex_hull(points):
     return stack
 
 
-def get_square_bounding_box(bounding_box):
+def get_square_bounding_box(bounding_box: List[Point]) -> List[Point]:
     """
     Modifica la Bounding Box proporcionada para que tenga relación de aspecto 1:1 (cuadrada) dependiendo de si el ancho o el alto es mayor.
     La Bounding Box se puede obtener con el método get_bounding_box() de ConvexPolygon.
@@ -141,7 +144,7 @@ def get_square_bounding_box(bounding_box):
     return [(xmin, ymin), (xmin, ymin + dist), (xmin + dist, ymin + dist), (xmin + dist, ymin)]
 
 
-def get_draw_coordinates(square_bounding_box, point_list):
+def get_draw_coordinates(square_bounding_box: List[Point], point_list: List[Point]) -> List[Point]:
     """
     Transforma la lista de puntos envueltos en la Bounding Box proporcionada para que entren de manera proporcional
     en una Bounding Box de 400x400, correspondiente a las imagenes resultantes de dibujar un ConvexPolygon.
@@ -178,7 +181,7 @@ def get_draw_coordinates(square_bounding_box, point_list):
 
 class ConvexPolygon:
 
-    def __init__(self, points):
+    def __init__(self, points: List[Point]):
         """
         Función de inicialización del Poligono.
         Se forma en base al poligono convexo que envuelve a los puntos proporcionados.
@@ -189,7 +192,7 @@ class ConvexPolygon:
         # Se define también un color por defecto (Cyan)
         self.color = (59, 163, 188)
 
-    def __eq__(self, other):
+    def __eq__(self, other: "ConvexPolygon"):
         if isinstance(other, ConvexPolygon):
             return self.points == other.points
         return False
@@ -200,20 +203,6 @@ class ConvexPolygon:
             for coord in point:
                 sequence += format(coord, ".3f") + " "
         return sequence.rstrip()
-
-    def __distance_list(self):
-        if self.number_of_vertices() <= 1:
-            return []
-        if self.number_of_vertices() == 2:
-            return [calc_distance(self.points[0], self.points[1])]
-        else:
-            edge_list = []
-            for i in range(self.number_of_vertices()):
-                if i == self.number_of_vertices() - 1:
-                    edge_list.append(calc_distance(self.points[i], self.points[0]))
-                else:
-                    edge_list.append(calc_distance(self.points[i], self.points[i + 1]))
-            return edge_list
 
     def get_color(self) -> (int, int, int):
         """
@@ -237,7 +226,7 @@ class ConvexPolygon:
 
         self.color = tuple(map(to_int, color))
 
-    def get_vertices(self):
+    def get_vertices(self) -> List[Point]:
         """
         Devuelve la lista de vertices que conforman el polígono.
 
@@ -285,7 +274,7 @@ class ConvexPolygon:
                 return False
         return True
 
-    def union(self, convex_polygon):
+    def union(self, convex_polygon: "ConvexPolygon") -> "ConvexPolygon":
         """
         Calcula la union convexa de dos poligonos.
 
@@ -295,7 +284,7 @@ class ConvexPolygon:
         unified_points = self.get_vertices() + convex_polygon.get_vertices()
         return ConvexPolygon(unified_points)
 
-    def contains_convex_polygon(self, convex_polygon) -> bool:
+    def contains_convex_polygon(self, convex_polygon: "ConvexPolygon") -> bool:
         """
         Calcula si el polígono proporcionado puede ser englobado por este o no.
 
@@ -306,7 +295,7 @@ class ConvexPolygon:
         union = ConvexPolygon(unified_points)
         return union.get_vertices() == self.get_vertices()
 
-    def intersect(self, convex_polygon):
+    def intersect(self, convex_polygon: "ConvexPolygon") -> "ConvexPolygon":
         """
         Calcula la intersección entre dos polígonos.
         Algoritmo: Sutherland-Hodgman.
@@ -359,7 +348,7 @@ class ConvexPolygon:
 
         return ConvexPolygon(output_list)
 
-    def contains_point(self, point) -> bool:
+    def contains_point(self, point: Point) -> bool:
         """
         Calcula si el punto proporcionado está contenido por el polígono.
 
@@ -378,7 +367,7 @@ class ConvexPolygon:
                     return False
         return True
 
-    def get_centroid(self) -> (float, float):
+    def get_centroid(self) -> Point:
         """
         Calcula el punto centroide del polígono.
 
@@ -408,7 +397,7 @@ class ConvexPolygon:
 
         return round(centroid_x, 3), round(centroid_y, 3)
 
-    def get_area(self):
+    def get_area(self) -> float:
         """
         Calcula el area del polígono.
 
@@ -426,11 +415,11 @@ class ConvexPolygon:
 
         return round(abs(area / 2.0), 3)
 
-    def get_bounding_box(self):
+    def get_bounding_box(self) -> Optional[List[Point]]:
         """
         Calcula el polígono rectangular que envuelve al polígono.
 
-        :return: Lista de 4 puntos.
+        :return: Lista de 4 puntos. Si el polígono no tiene vertices, la Bounding Box será nula
         """
         if self.number_of_vertices() == 0:
             return None
@@ -470,9 +459,12 @@ class ConvexPolygon:
         img.save(filename)
 
     @staticmethod
-    def draw(filename: str, polygon_list, image_handler=None):
+    def draw(filename: str, polygon_list: List["ConvexPolygon"], image_handler=None):
         """
         Guarda una imagen con la lista de polígonos proporcionada en el archivo con el nombre proporcionado por parámetro.
+
+        Se puede proporcionar un método image_handler(filename: str, image: io.BitesIO) que permite que se pueda gestionar
+        la imagen de una forma alternativa a guardarla en disco. Este caso es especialmente útil para el Bot de Telegram.
 
         :param filename: Nombre de la imagen (Debe incluir la extensión .png)
         :param polygon_list: Lista de polígonos a dibujar
@@ -537,7 +529,7 @@ class ConvexPolygon:
             img.save(filename)
 
     @staticmethod
-    def random(number_of_vertices: int):
+    def random(number_of_vertices: int) -> "ConvexPolygon":
         """
         Genera una lista de vertices aleatorios y calcula el ConvexPolygon resultante a partir de esa lista.
 
@@ -550,3 +542,17 @@ class ConvexPolygon:
         for _ in range(number_of_vertices):
             point_list.append((round(random(), 3), round(random(), 3)))
         return ConvexPolygon(point_list)
+
+    def __distance_list(self) -> List[float]:
+        if self.number_of_vertices() <= 1:
+            return []
+        if self.number_of_vertices() == 2:
+            return [calc_distance(self.points[0], self.points[1])]
+        else:
+            edge_list = []
+            for i in range(self.number_of_vertices()):
+                if i == self.number_of_vertices() - 1:
+                    edge_list.append(calc_distance(self.points[i], self.points[0]))
+                else:
+                    edge_list.append(calc_distance(self.points[i], self.points[i + 1]))
+            return edge_list
