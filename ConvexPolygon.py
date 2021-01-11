@@ -3,9 +3,9 @@ from PIL import Image, ImageDraw
 from functools import cmp_to_key
 from random import random
 from io import BytesIO
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
-Point = (float, float)  # Tipo escrito para simplificar los requerimientos de tipos en los métodos
+Point = Tuple[float, float]  # Tipo escrito para simplificar los requerimientos de tipos en los métodos
 
 
 def calc_distance(point_a: Point, point_b: Point) -> float:
