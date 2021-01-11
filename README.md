@@ -82,7 +82,7 @@ El bot de Telegram utiliza el lenguaje de programación creado. En caso de quere
 
 Antes de poder hablar con el bot, será necesario inicializarlo. Para ello solamente será necesario ejecutar el script "bot.py":
 ```
-python3 bot.py
+python3 bot/bot.py
 ```
 
 #### Enlace y uso del bot
