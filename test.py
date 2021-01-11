@@ -1,4 +1,4 @@
-from ConvexPolygon import ConvexPolygon
+from polygons import ConvexPolygon
 
 print("Welcome to ConvexPolygon test")
 

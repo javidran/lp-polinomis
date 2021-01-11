@@ -1,4 +1,4 @@
-from ConvexPolygon import ConvexPolygon
+from polygons import ConvexPolygon
 
 if __name__ is not None and "." in __name__:
     from .PolygonParser import PolygonParser
