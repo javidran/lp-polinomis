@@ -532,7 +532,7 @@ class ConvexPolygon:
             img.save(filename)
 
     @staticmethod
-    def random(number_of_vertices):
+    def random(number_of_vertices: int):
         """
         Genera una lista de vertices aleatorios y calcula el ConvexPolygon resultante a partir de esa lista.
 

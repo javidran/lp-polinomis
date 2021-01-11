@@ -69,8 +69,8 @@ INSIDE: 'inside';
 EQUAL: 'equal';
 DRAW: 'draw';
 
-ID : [a-zA-Z] [a-zA-Z0-9_]* ;
-STRING : [0-9A-Za-z._\-]+ ;
+ID : [a-zA-Z] [a-zA-Z0-9_]* ; // Un ID es utilizado para definir variables. Solo acepta letras, números y barras bajas.
+STRING : [0-9A-Za-z._\-]+ ; // Un String es utilizado para definir el nombre del archivo. A diferencia del ID, puede aceptar guiones y puntos.
 
-COMMENT : '//' ~[\r\n]* -> skip ;
-WS : [ \r\n\t]+ -> skip ;
+COMMENT : '//' ~[\r\n]* -> skip ; // Ignora el contenido de la linea a partir de doble barra.
+WS : [ \r\n\t]+ -> skip ; // Ignora espacios, tabuladores y nuevas lineas.
